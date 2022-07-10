@@ -176,7 +176,6 @@ namespace VirtualMachineTutorial
             if (res.Any()) return res.ElementAt(0).Value;
             return UnknownInstruction;
         }
-
         internal static byte NOP(Registers6502 registers, AddrMode6502 addressMode, Bus6502 memory)
         {
             return 0;
@@ -239,7 +238,94 @@ namespace VirtualMachineTutorial
         }
         internal static byte ADC(Registers6502 registers, AddrMode6502 addressMode, Bus6502 memory)
         {
-            return 0;
+            const byte hi = 0;
+            byte value = 0;
+            switch (addressMode)
+            {
+                case AddrMode6502.Immediate:
+                    {
+                        value = memory.ReadByte(registers.PC);
+                        break;
+                    }
+                case AddrMode6502.Absolute:
+                    {
+                        ushort addr = memory.ReadWord(registers.PC);
+                        value = memory.ReadByte(addr);
+                        break;
+                    }
+                case AddrMode6502.ZeroPage:
+                    {
+                        var lo = memory.ReadByte(registers.PC);
+
+                        ushort address;
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            address = BitConverter.ToUInt16(new[] { lo, hi }, 0);
+                        }
+                        else
+                        {
+                            address = BitConverter.ToUInt16(new[] { hi, lo }, 0);
+                        }
+                        value = memory.ReadByte(address);
+                        break;
+                    }
+                case AddrMode6502.IndexedIndirect:
+                    {
+                        byte lozpx = (byte)((registers.X + memory.ReadByte(registers.PC)) % (byte.MinValue + 1));
+                        ushort addrIndir;
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            addrIndir = BitConverter.ToUInt16(new[] { lozpx, hi }, 0);
+                        }
+                        else
+                        {
+                            addrIndir = BitConverter.ToUInt16(new[] { hi, lozpx }, 0);
+                        }
+                        ushort addrDir = memory.ReadWord(addrIndir);
+                        value = memory.ReadByte(addrDir);
+                        break;
+                    }
+                case AddrMode6502.IndirectIndexed:
+                    {
+                        break;
+                    }
+                case AddrMode6502.ZeroPageX:
+                    {
+                        byte lozpx = (byte)(registers.X + memory.ReadByte(registers.PC));
+                        ushort addresszpx;
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            addresszpx = BitConverter.ToUInt16(new[] { lozpx, hi }, 0);
+                        }
+                        else
+                        {
+                            addresszpx = BitConverter.ToUInt16(new[] { hi, lozpx }, 0);
+                        }
+                        value = memory.ReadByte(addresszpx);
+                        break;
+                    }
+                case AddrMode6502.AbsoluteX:
+                    {
+                        var addrax = (ushort)(memory.ReadWord(registers.PC) + registers.X);
+                        value = memory.ReadByte(addrax);
+                        break;
+                    }
+                case AddrMode6502.AbsoluteY:
+                    {
+                        var addray = (ushort)(memory.ReadWord(registers.PC) + registers.Y);
+                        value = memory.ReadByte(addray);
+                        break;
+                    }
+                default:
+                    throw new InvalidOperationException("Invalid Addressing Mode for ADC");
+            }
+            registers.A += value;
+            if ((registers.A & 0xFF) != 0)
+            {
+                registers.Status |= Status6502.Carry;
+            }
+            registers.PC++;
+            return 2;
         }
         internal static byte AND(Registers6502 registers, AddrMode6502 addressMode, Bus6502 memory)
         {
