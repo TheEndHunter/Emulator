@@ -1,4 +1,6 @@
-﻿namespace VirtualMachineTutorial
+﻿using System.Diagnostics;
+
+namespace VirtualMachineTutorial
 {
     public class InstructionSet6502
     {
@@ -181,6 +183,10 @@
         }
         internal static byte BRK(Registers6502 registers, AddrMode6502 addressMode, Bus6502 memory)
         {
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
             return 0;
         }
         internal static byte ORA(Registers6502 registers, AddrMode6502 addressMode, Bus6502 memory)
@@ -401,5 +407,4 @@
             return 0;
         }
     }
-
 }
