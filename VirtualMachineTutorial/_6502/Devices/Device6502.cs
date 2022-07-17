@@ -1,4 +1,4 @@
-﻿namespace VirtualMachineTutorial
+﻿namespace Emulator._6502.Devices
 {
     public abstract class Device6502
     {

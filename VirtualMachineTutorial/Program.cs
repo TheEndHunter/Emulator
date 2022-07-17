@@ -1,10 +1,13 @@
-﻿namespace VirtualMachineTutorial
+﻿using Emulator._6502.CPU;
+using Emulator._6502.Devices;
+
+namespace Emulator
 {
     internal static class Program
     {
         public static int Main(params string[] args)
         {
-            var temp = new InstructionSet6502();
+            var instruct = new InstructionSet6502();
             var reg = new Registers6502();
             var ram = new Ram6502();
             var bus = new Bus6502();
@@ -32,6 +35,9 @@
                 Console.ReadKey();
                 return 1;
             }
+
+            instruct[0x00].Execute(reg, bus);
+
 
             Console.WriteLine("Successfully to read/write byte & word");
             Console.ReadKey();

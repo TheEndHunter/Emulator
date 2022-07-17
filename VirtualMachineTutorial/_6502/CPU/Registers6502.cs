@@ -1,4 +1,4 @@
-﻿namespace VirtualMachineTutorial
+﻿namespace Emulator._6502.CPU
 {
     public struct Registers6502
     {

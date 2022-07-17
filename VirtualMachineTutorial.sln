@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Testing", "Emulator.Testing\Emulator.Testing.csproj", "{F3613491-BFDD-4C7C-8044-BA5B6FA00B68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{5612F52C-E3CB-4A03-88FD-104013573B40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5612F52C-E3CB-4A03-88FD-104013573B40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5612F52C-E3CB-4A03-88FD-104013573B40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3613491-BFDD-4C7C-8044-BA5B6FA00B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3613491-BFDD-4C7C-8044-BA5B6FA00B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3613491-BFDD-4C7C-8044-BA5B6FA00B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3613491-BFDD-4C7C-8044-BA5B6FA00B68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

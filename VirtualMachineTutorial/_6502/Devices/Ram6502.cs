@@ -1,15 +1,15 @@
-﻿namespace VirtualMachineTutorial
+﻿namespace Emulator._6502.Devices
 {
     public class Ram6502 : Device6502
     {
-        private bool convertEdian;
+        private readonly bool convertEdian;
         public Ram6502()
         {
             convertEdian = !BitConverter.IsLittleEndian;
             memory = new byte[0xFFFF];
         }
 
-        private byte[] memory;
+        private readonly byte[] memory;
 
         public override byte ReadByte(ushort addr)
         {
