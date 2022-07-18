@@ -16,7 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VirtualMachineTutorial\Emulator.csproj" />
+    <Folder Include="_6502\CPU\Instructions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Emulator\Emulator.csproj" />
   </ItemGroup>
 
 </Project>

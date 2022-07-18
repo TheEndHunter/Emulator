@@ -1,10 +1,13 @@
 ﻿using Emulator._6502.Devices;
 
+using System.Diagnostics;
+
 namespace Emulator._6502.CPU.Instructions
 {
     /// <summary>
     /// 6502 instruction
     /// </summary>
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public abstract class Instruction6502
     {
         /// <summary>
@@ -23,5 +26,10 @@ namespace Emulator._6502.CPU.Instructions
         public AddrMode6502 AddressMode { get; }
         public Status6502 Flags { get; }
         public abstract byte Execute(Registers6502 registers, Bus6502 bus);
+
+        public string GetDebuggerDisplay()
+        {
+            return $"{Name}[A:{AddressMode}][F:{Flags}]";
+        }
     }
 }

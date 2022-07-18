@@ -44,6 +44,18 @@ namespace Emulator._6502.CPU.Instructions
         }
     }
 
+    public sealed class ADC_Immediate : ADC
+    {
+        public ADC_Immediate() : base(AddrMode6502.Immediate)
+        {
+        }
+
+        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        {
+            return 0;
+        }
+    }
+
     public sealed class ADC_IndirectIndexed : ADC
     {
         public ADC_IndirectIndexed() : base(AddrMode6502.IndirectIndexed)

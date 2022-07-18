@@ -1,10 +1,18 @@
 ﻿using Emulator._6502.CPU;
 using Emulator._6502.Devices;
 
-namespace Emulator
+namespace Emulator.App
 {
+    /// <summary>
+    /// The program.
+    /// </summary>
     internal static class Program
     {
+        /// <summary>
+        /// Main Entry Point
+        /// </summary>
+        /// <param name="args">Program Startup Arguments</param>
+        /// <returns>Exit Code</returns>
         public static int Main(params string[] args)
         {
             var instruct = new InstructionSet6502();

@@ -3,7 +3,7 @@
     public class Ram6502 : Device6502
     {
         private readonly bool convertEdian;
-        public Ram6502()
+        public Ram6502() : base("RAM")
         {
             convertEdian = !BitConverter.IsLittleEndian;
             memory = new byte[0xFFFF];
