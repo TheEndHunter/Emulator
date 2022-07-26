@@ -7,6 +7,20 @@ namespace Emulator._6502.CPU.Instructions
         protected ADC(AddrMode6502 mode) : base("ADC", mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
         {
         }
+        protected static void SetFlags(Registers6502 registers, byte data, ushort value)
+        {
+            // The carry flag out exists in the high byte bit 0
+            registers.SetFlag(Status6502.Carry, value > 255);
+
+            // The Zero flag is set if the result is 0
+            registers.SetFlag(Status6502.Zero, (value & 0x00FF) == 0);
+
+            // The signed Overflow flag is set based on all that up there! :D
+            registers.SetFlag(Status6502.OverFlow, (~(registers.A ^ data) & (registers.A ^ value) & 0x0080) > 0);
+
+            // The negative flag is set to the most significant bit of the result
+            registers.SetFlag(Status6502.Negative, (value & 0x80) > 0);
+        }
     }
 
     public sealed class ADC_ZeroPage : ADC
@@ -14,10 +28,13 @@ namespace Emulator._6502.CPU.Instructions
         public ADC_ZeroPage() : base(AddrMode6502.ZeroPage)
         {
         }
-
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            byte fetched = bus.ReadByte(ZeroPage(registers, bus));
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return 3;
         }
     }
 
@@ -29,7 +46,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            byte fetched = bus.ReadByte(ZeroPageX(registers, bus));
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return 4;
         }
     }
     public sealed class ADC_Absolute : ADC
@@ -40,7 +61,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            byte fetched = bus.ReadByte(Absolute(registers, bus));
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return 4;
         }
     }
 
@@ -52,7 +77,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            byte fetched = bus.ReadByte(Immediate(registers, bus));
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return 2;
         }
     }
 
@@ -64,7 +93,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            byte fetched = bus.ReadByte(IndirectIndex(registers, bus));
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return 6;
         }
     }
 
@@ -76,7 +109,12 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var (addr, clocks) = IndexIndirect(registers, bus);
+            byte fetched = bus.ReadByte(addr);
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return (byte)(clocks + 5);
         }
     }
 
@@ -88,7 +126,12 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var (addr, clocks) = AbsoluteX(registers, bus);
+            byte fetched = bus.ReadByte(addr);
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return (byte)(clocks + 4);
         }
     }
     public sealed class ADC_AbsoluteY : ADC
@@ -99,7 +142,12 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var (addr, clocks) = AbsoluteY(registers, bus);
+            byte fetched = bus.ReadByte(addr);
+            ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, fetched, temp);
+            return (byte)(clocks + 4);
         }
     }
 }

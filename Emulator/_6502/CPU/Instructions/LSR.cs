@@ -7,6 +7,14 @@ namespace Emulator._6502.CPU.Instructions
         protected LSR(AddrMode6502 mode) : base("LSR", mode, Status6502.Zero | Status6502.Negative)
         {
         }
+        protected static void SetFlags(Registers6502 registers, byte data)
+        {
+            // The Zero flag is set if the result is 0
+            registers.SetFlag(Status6502.Zero, data == 0x00);
+
+            // The negative flag is set to the most significant bit of the result
+            registers.SetFlag(Status6502.Negative, false);
+        }
     }
 
     public sealed class LSR_Accumulator : LSR
@@ -17,7 +25,10 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            registers.SetFlag(Status6502.Carry, (registers.A & 0x01) > 0);
+            registers.A = (byte)(registers.A >> 1);
+            SetFlags(registers, registers.A);
+            return 2;
         }
     }
 
@@ -29,7 +40,13 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = ZeroPage(registers, bus);
+            var d = bus.ReadByte(addr);
+            registers.SetFlag(Status6502.Carry, (d & 0x01) > 0);
+            d = (byte)(d >> 1);
+            SetFlags(registers, d);
+            bus.Write(addr, d);
+            return 5;
         }
     }
     public sealed class LSR_Absolute : LSR
@@ -40,7 +57,13 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = Absolute(registers, bus);
+            var d = bus.ReadByte(addr);
+            registers.SetFlag(Status6502.Carry, (d & 0x01) > 0);
+            d = (byte)(d >> 1);
+            SetFlags(registers, d);
+            bus.Write(addr, d);
+            return 6;
         }
     }
 
@@ -52,7 +75,13 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = ZeroPageX(registers, bus);
+            var d = bus.ReadByte(addr);
+            registers.SetFlag(Status6502.Carry, (d & 0x01) > 0);
+            d = (byte)(d >> 1);
+            SetFlags(registers, d);
+            bus.Write(addr, d);
+            return 6;
         }
     }
     public sealed class LSR_AbsoluteX : LSR
@@ -63,7 +92,13 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = AbsoluteX(registers, bus).addr;
+            var d = bus.ReadByte(addr);
+            registers.SetFlag(Status6502.Carry, (d & 0x01) > 0);
+            d = (byte)(d >> 1);
+            SetFlags(registers, d);
+            bus.Write(addr, d);
+            return 7;
         }
     }
 }

@@ -7,6 +7,14 @@ namespace Emulator._6502.CPU.Instructions
         protected LDA(AddrMode6502 mode) : base("LDA", mode, Status6502.Zero | Status6502.Negative)
         {
         }
+        protected static void SetFlags(Registers6502 registers, byte data)
+        {
+            // The Zero flag is set if the result is 0
+            registers.SetFlag(Status6502.Zero, data == 0x00);
+
+            // The negative flag is set to the most significant bit of the result
+            registers.SetFlag(Status6502.Negative, (data & 0x80) > 0);
+        }
     }
 
     public sealed class LDA_Immediate : LDA
@@ -17,7 +25,9 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            registers.A = bus.ReadByte(Immediate(registers, bus));
+            SetFlags(registers, registers.A);
+            return 2;
         }
     }
 
@@ -29,7 +39,10 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var (addr, clocks) = IndexIndirect(registers, bus);
+            registers.A = bus.ReadByte(addr);
+            SetFlags(registers, registers.A);
+            return (byte)(5 + clocks);
         }
     }
     public sealed class LDA_IndirectIndexed : LDA
@@ -40,7 +53,9 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            registers.A = bus.ReadByte(IndirectIndex(registers, bus));
+            SetFlags(registers, registers.A);
+            return 6;
         }
     }
 
@@ -52,7 +67,9 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            registers.A = bus.ReadByte(ZeroPage(registers, bus));
+            SetFlags(registers, registers.A);
+            return 3;
         }
     }
     public sealed class LDA_Absolute : LDA
@@ -63,7 +80,9 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            registers.A = bus.ReadByte(Absolute(registers, bus));
+            SetFlags(registers, registers.A);
+            return 4;
         }
     }
 
@@ -75,7 +94,9 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            registers.A = bus.ReadByte(ZeroPageX(registers, bus));
+            SetFlags(registers, registers.A);
+            return 4;
         }
     }
     public sealed class LDA_AbsoluteX : LDA
@@ -86,7 +107,10 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var (addr, clocks) = AbsoluteX(registers, bus);
+            registers.A = bus.ReadByte(addr);
+            SetFlags(registers, registers.A);
+            return (byte)(4 + clocks);
         }
     }
     public sealed class LDA_AbsoluteY : LDA
@@ -97,7 +121,10 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var (addr, clocks) = AbsoluteY(registers, bus);
+            registers.A = bus.ReadByte(addr);
+            SetFlags(registers, registers.A);
+            return (byte)(4 + clocks);
         }
     }
 }

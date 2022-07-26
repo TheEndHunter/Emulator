@@ -10,7 +10,13 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = Absolute(registers, bus);
+            registers.PC -= 2;
+            bus.Write((ushort)(0x0100 + registers.STKP), registers.PC);
+            registers.STKP -= 2;
+
+            registers.PC = addr;
+            return 6;
         }
     }
 }

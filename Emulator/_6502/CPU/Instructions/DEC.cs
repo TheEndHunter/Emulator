@@ -7,6 +7,14 @@ namespace Emulator._6502.CPU.Instructions
         protected DEC(AddrMode6502 mode) : base("DEC", mode, Status6502.Zero | Status6502.Negative)
         {
         }
+        protected static void SetFlags(Registers6502 registers, ushort data)
+        {
+            // The Zero flag is set if the result is 0
+            registers.SetFlag(Status6502.Zero, (data & 0x00FF) == 0);
+
+            // The negative flag is set to the most significant bit of the result
+            registers.SetFlag(Status6502.Negative, (data & 0x80) > 0);
+        }
     }
 
     public sealed class DEC_ZeroPage : DEC
@@ -17,7 +25,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = ZeroPage(registers, bus);
+            var t = (ushort)(bus.ReadByte(addr) - 1);
+            bus.Write(addr, (byte)(t & 0x00FF));
+            SetFlags(registers, t);
+            return 5;
         }
     }
     public sealed class DEC_Absolute : DEC
@@ -28,7 +40,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = Absolute(registers, bus);
+            var t = (ushort)(bus.ReadByte(addr) - 1);
+            bus.Write(addr, (byte)(t & 0x00FF));
+            SetFlags(registers, t);
+            return 6;
         }
     }
 
@@ -40,7 +56,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = ZeroPageX(registers, bus);
+            var t = (ushort)(bus.ReadByte(addr) - 1);
+            bus.Write(addr, (byte)(t & 0x00FF));
+            SetFlags(registers, t);
+            return 6;
         }
     }
     public sealed class DEC_AbsoluteX : DEC
@@ -51,7 +71,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var addr = AbsoluteX(registers, bus).addr;
+            var t = (ushort)(bus.ReadByte(addr) - 1);
+            bus.Write(addr, (byte)(t & 0x00FF));
+            SetFlags(registers, t);
+            return 7;
         }
     }
 }

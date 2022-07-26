@@ -7,6 +7,19 @@ namespace Emulator._6502.CPU.Instructions
         protected ASL(AddrMode6502 mode) : base("ASL", mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
         {
         }
+        protected static void SetFlags(Registers6502 registers, ushort data)
+        {
+
+            // The carry flag out exists in the high byte bit 0
+            registers.SetFlag(Status6502.Carry, (data & 0xFF00) > 0);
+
+            // The Zero flag is set if the result is 0
+            registers.SetFlag(Status6502.Zero, (data & 0x00FF) == 0x00);
+
+
+            // The negative flag is set to the most significant bit of the result
+            registers.SetFlag(Status6502.Negative, (data & 0x80) > 0);
+        }
     }
 
     public sealed class ASL_Acumulator : ASL
@@ -17,7 +30,10 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var temp = (ushort)(registers.A << 1);
+            registers.A = (byte)(temp & 0x00FF);
+            SetFlags(registers, temp);
+            return 2;
         }
     }
 
@@ -29,7 +45,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var raddr = registers.PC;
+            var temp = (ushort)(bus.ReadByte(ZeroPage(registers, bus)) << 1);
+            bus.Write(raddr, (byte)(temp & 0x00FF));
+            SetFlags(registers, temp);
+            return 5;
         }
     }
 
@@ -41,7 +61,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var raddr = registers.PC;
+            var temp = (ushort)(bus.ReadByte(ZeroPageX(registers, bus)) << 1);
+            bus.Write(raddr, (byte)(temp & 0x00FF));
+            SetFlags(registers, temp);
+            return 6;
         }
     }
     public sealed class ASL_Absolute : ASL
@@ -52,7 +76,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var raddr = registers.PC;
+            var temp = (ushort)(bus.ReadByte(Absolute(registers, bus)) << 1);
+            bus.Write(raddr, (byte)(temp & 0x00FF));
+            SetFlags(registers, temp);
+            return 6;
         }
     }
 
@@ -64,7 +92,11 @@ namespace Emulator._6502.CPU.Instructions
 
         public override byte Execute(Registers6502 registers, Bus6502 bus)
         {
-            return 0;
+            var raddr = registers.PC;
+            var temp = (ushort)(bus.ReadByte(AbsoluteX(registers, bus).addr) << 1);
+            bus.Write(raddr, (byte)(temp & 0x00FF));
+            SetFlags(registers, temp);
+            return 7;
         }
     }
 }
