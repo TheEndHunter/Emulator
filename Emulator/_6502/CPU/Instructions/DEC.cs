@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class DEC : Instruction6502
     {
-        protected DEC(AddrMode6502 mode) : base("DEC", mode, Status6502.Zero | Status6502.Negative)
+        protected DEC(byte bytesUsed, AddrMode6502 mode) : base("DEC", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, ushort data)
@@ -19,7 +19,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class DEC_ZeroPage : DEC
     {
-        public DEC_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public DEC_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class DEC_Absolute : DEC
     {
-        public DEC_Absolute() : base(AddrMode6502.Absolute)
+        public DEC_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -50,7 +50,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class DEC_ZeroPageX : DEC
     {
-        public DEC_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public DEC_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -65,7 +65,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class DEC_AbsoluteX : DEC
     {
-        public DEC_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public DEC_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 

@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class CLI : Instruction6502
     {
-        public CLI() : base("CLI", AddrMode6502.Implied, Status6502.InterruptDisable)
+        public CLI() : base("CLI", 1, AddrMode6502.Implied, Status6502.InterruptDisable)
         {
         }
 

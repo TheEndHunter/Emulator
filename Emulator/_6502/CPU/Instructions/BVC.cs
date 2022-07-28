@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class BVC : Instruction6502
     {
-        public BVC() : base("BVC", AddrMode6502.Relative, Status6502.None)
+        public BVC() : base("BVC", 2, AddrMode6502.Relative, Status6502.None)
         {
         }
 

@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class BIT : Instruction6502
     {
-        protected BIT(AddrMode6502 mode) : base("BIT", mode, Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
+        protected BIT(byte bytesUsed, AddrMode6502 mode) : base("BIT", bytesUsed, mode, Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
         {
         }
 
@@ -20,7 +20,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class BIT_ZeroPage : BIT
     {
-        public BIT_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public BIT_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class BIT_Absolute : BIT
     {
-        public BIT_Absolute() : base(AddrMode6502.Absolute)
+        public BIT_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 

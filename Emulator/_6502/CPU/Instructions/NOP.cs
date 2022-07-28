@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class NOP : Instruction6502
     {
-        public NOP() : base("NOP", AddrMode6502.Implied, Status6502.None)
+        public NOP() : base("NOP", 1, AddrMode6502.Implied, Status6502.None)
         {
         }
 

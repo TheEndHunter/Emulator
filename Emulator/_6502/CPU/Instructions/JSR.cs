@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class JSR : Instruction6502
     {
-        public JSR() : base("JSR", AddrMode6502.Absolute, Status6502.None)
+        public JSR() : base("JSR", 3, AddrMode6502.Absolute, Status6502.None)
         {
         }
 

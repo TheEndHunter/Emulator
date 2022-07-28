@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class ASL : Instruction6502
     {
-        protected ASL(AddrMode6502 mode) : base("ASL", mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
+        protected ASL(byte bytesUsed, AddrMode6502 mode) : base("ASL", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, ushort data)
@@ -24,7 +24,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ASL_Acumulator : ASL
     {
-        public ASL_Acumulator() : base(AddrMode6502.Accumulator)
+        public ASL_Acumulator() : base(1, AddrMode6502.Accumulator)
         {
         }
 
@@ -39,7 +39,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ASL_ZeroPage : ASL
     {
-        public ASL_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public ASL_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -55,7 +55,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ASL_ZeroPageX : ASL
     {
-        public ASL_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public ASL_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -70,7 +70,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class ASL_Absolute : ASL
     {
-        public ASL_Absolute() : base(AddrMode6502.Absolute)
+        public ASL_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -86,7 +86,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ASL_AbsoluteX : ASL
     {
-        public ASL_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public ASL_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 

@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class EOR : Instruction6502
     {
-        protected EOR(AddrMode6502 mode) : base("EOR", mode, Status6502.Zero | Status6502.Negative)
+        protected EOR(byte bytesUsed, AddrMode6502 mode) : base("EOR", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, byte data)
@@ -18,7 +18,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class EOR_Immediate : EOR
     {
-        public EOR_Immediate() : base(AddrMode6502.Immediate)
+        public EOR_Immediate() : base(2, AddrMode6502.Immediate)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class EOR_IndirectIndexed : EOR
     {
-        public EOR_IndirectIndexed() : base(AddrMode6502.IndirectIndexed)
+        public EOR_IndirectIndexed() : base(2, AddrMode6502.IndirectIndexed)
         {
         }
 
@@ -45,7 +45,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class EOR_IndexedIndirect : EOR
     {
-        public EOR_IndexedIndirect() : base(AddrMode6502.IndexedIndirect)
+        public EOR_IndexedIndirect() : base(2, AddrMode6502.IndexedIndirect)
         {
         }
 
@@ -60,7 +60,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class EOR_ZeroPage : EOR
     {
-        public EOR_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public EOR_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -73,7 +73,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class EOR_Absolute : EOR
     {
-        public EOR_Absolute() : base(AddrMode6502.Absolute)
+        public EOR_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -87,7 +87,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class EOR_ZeroPageX : EOR
     {
-        public EOR_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public EOR_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -100,7 +100,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class EOR_AbsoluteX : EOR
     {
-        public EOR_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public EOR_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 
@@ -114,7 +114,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class EOR_AbsoluteY : EOR
     {
-        public EOR_AbsoluteY() : base(AddrMode6502.AbsoluteY)
+        public EOR_AbsoluteY() : base(3, AddrMode6502.AbsoluteY)
         {
         }
 

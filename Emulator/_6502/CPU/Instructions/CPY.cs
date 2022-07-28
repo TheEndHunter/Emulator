@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class CPY : Instruction6502
     {
-        protected CPY(AddrMode6502 mode) : base("CPY", mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
+        protected CPY(byte bytesUsed, AddrMode6502 mode) : base("CPY", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, byte fetched)
@@ -23,7 +23,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CPY_Immediate : CPY
     {
-        public CPY_Immediate() : base(AddrMode6502.Immediate)
+        public CPY_Immediate() : base(2, AddrMode6502.Immediate)
         {
 
         }
@@ -36,7 +36,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class CPY_Absolute : CPY
     {
-        public CPY_Absolute() : base(AddrMode6502.Absolute)
+        public CPY_Absolute() : base(3, AddrMode6502.Absolute)
         {
 
         }
@@ -50,7 +50,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CPY_ZeroPage : CPY
     {
-        public CPY_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public CPY_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
 
         }

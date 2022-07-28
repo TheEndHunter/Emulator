@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class BPL : Instruction6502
     {
-        public BPL() : base("BPL", AddrMode6502.Relative, Status6502.None)
+        public BPL() : base("BPL", 2, AddrMode6502.Relative, Status6502.None)
         {
         }
 

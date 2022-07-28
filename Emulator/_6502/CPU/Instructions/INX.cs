@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class INX : Instruction6502
     {
-        public INX() : base("INX", AddrMode6502.Implied, Status6502.Zero | Status6502.Negative)
+        public INX() : base("INX", 1, AddrMode6502.Implied, Status6502.Zero | Status6502.Negative)
         {
         }
 

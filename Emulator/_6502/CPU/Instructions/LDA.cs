@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class LDA : Instruction6502
     {
-        protected LDA(AddrMode6502 mode) : base("LDA", mode, Status6502.Zero | Status6502.Negative)
+        protected LDA(byte bytesUsed, AddrMode6502 mode) : base("LDA", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, byte data)
@@ -19,7 +19,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LDA_Immediate : LDA
     {
-        public LDA_Immediate() : base(AddrMode6502.Immediate)
+        public LDA_Immediate() : base(2, AddrMode6502.Immediate)
         {
         }
 
@@ -33,7 +33,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LDA_IndexedIndirect : LDA
     {
-        public LDA_IndexedIndirect() : base(AddrMode6502.IndexedIndirect)
+        public LDA_IndexedIndirect() : base(2, AddrMode6502.IndexedIndirect)
         {
         }
 
@@ -47,7 +47,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LDA_IndirectIndexed : LDA
     {
-        public LDA_IndirectIndexed() : base(AddrMode6502.IndirectIndexed)
+        public LDA_IndirectIndexed() : base(2, AddrMode6502.IndirectIndexed)
         {
         }
 
@@ -61,7 +61,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LDA_ZeroPage : LDA
     {
-        public LDA_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public LDA_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -74,7 +74,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LDA_Absolute : LDA
     {
-        public LDA_Absolute() : base(AddrMode6502.Absolute)
+        public LDA_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -88,7 +88,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LDA_ZeroPageX : LDA
     {
-        public LDA_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public LDA_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -101,7 +101,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LDA_AbsoluteX : LDA
     {
-        public LDA_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public LDA_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 
@@ -115,7 +115,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LDA_AbsoluteY : LDA
     {
-        public LDA_AbsoluteY() : base(AddrMode6502.AbsoluteY)
+        public LDA_AbsoluteY() : base(3, AddrMode6502.AbsoluteY)
         {
         }
 

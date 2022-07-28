@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class DEY : Instruction6502
     {
-        public DEY() : base("DEY", AddrMode6502.Implied, Status6502.Zero | Status6502.Negative)
+        public DEY() : base("DEY", 1, AddrMode6502.Implied, Status6502.Zero | Status6502.Negative)
         {
         }
 

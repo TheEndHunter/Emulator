@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class BNE : Instruction6502
     {
-        public BNE() : base("BNE", AddrMode6502.Relative, Status6502.None)
+        public BNE() : base("BNE", 2, AddrMode6502.Relative, Status6502.None)
         {
         }
 

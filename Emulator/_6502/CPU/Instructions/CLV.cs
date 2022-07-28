@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class CLV : Instruction6502
     {
-        public CLV() : base("CLV", AddrMode6502.Implied, Status6502.OverFlow)
+        public CLV() : base("CLV", 1, AddrMode6502.Implied, Status6502.OverFlow)
         {
         }
 

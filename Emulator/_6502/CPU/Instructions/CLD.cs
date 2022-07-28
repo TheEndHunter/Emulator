@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class CLD : Instruction6502
     {
-        public CLD() : base("CLD", AddrMode6502.Implied, Status6502.Decimal)
+        public CLD() : base("CLD", 1, AddrMode6502.Implied, Status6502.Decimal)
         {
         }
 

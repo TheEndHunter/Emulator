@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class BEQ : Instruction6502
     {
-        public BEQ() : base("BEQ", AddrMode6502.Relative, Status6502.None)
+        public BEQ() : base("BEQ", 2, AddrMode6502.Relative, Status6502.None)
         {
         }
 

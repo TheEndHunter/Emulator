@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class BRK : Instruction6502
     {
-        public BRK() : base("BRK", AddrMode6502.Implied, Status6502.None)
+        public BRK() : base("BRK", 1, AddrMode6502.Implied, Status6502.None)
         {
         }
 

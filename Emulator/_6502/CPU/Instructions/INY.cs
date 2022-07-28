@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class INY : Instruction6502
     {
-        public INY() : base("INY", AddrMode6502.Implied, Status6502.Zero | Status6502.Negative)
+        public INY() : base("INY", 1, AddrMode6502.Implied, Status6502.Zero | Status6502.Negative)
         {
         }
 

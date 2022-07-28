@@ -4,9 +4,10 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class ADC : Instruction6502
     {
-        protected ADC(AddrMode6502 mode) : base("ADC", mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
+        protected ADC(byte bytesUsed, AddrMode6502 mode) : base("ADC", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
         {
         }
+
         protected static void SetFlags(Registers6502 registers, byte data, ushort value)
         {
             // The carry flag out exists in the high byte bit 0
@@ -25,7 +26,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ADC_ZeroPage : ADC
     {
-        public ADC_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public ADC_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
         public override byte Execute(Registers6502 registers, Bus6502 bus)
@@ -40,7 +41,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ADC_ZeroPageX : ADC
     {
-        public ADC_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public ADC_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -55,7 +56,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class ADC_Absolute : ADC
     {
-        public ADC_Absolute() : base(AddrMode6502.Absolute)
+        public ADC_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -71,7 +72,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ADC_Immediate : ADC
     {
-        public ADC_Immediate() : base(AddrMode6502.Immediate)
+        public ADC_Immediate() : base(2, AddrMode6502.Immediate)
         {
         }
 
@@ -87,7 +88,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ADC_IndirectIndexed : ADC
     {
-        public ADC_IndirectIndexed() : base(AddrMode6502.IndirectIndexed)
+        public ADC_IndirectIndexed() : base(2, AddrMode6502.IndirectIndexed)
         {
         }
 
@@ -103,7 +104,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ADC_IndexedIndirect : ADC
     {
-        public ADC_IndexedIndirect() : base(AddrMode6502.IndexedIndirect)
+        public ADC_IndexedIndirect() : base(2, AddrMode6502.IndexedIndirect)
         {
         }
 
@@ -120,7 +121,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class ADC_AbsoluteX : ADC
     {
-        public ADC_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public ADC_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 
@@ -136,7 +137,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class ADC_AbsoluteY : ADC
     {
-        public ADC_AbsoluteY() : base(AddrMode6502.AbsoluteY)
+        public ADC_AbsoluteY() : base(3, AddrMode6502.AbsoluteY)
         {
         }
 

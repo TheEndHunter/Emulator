@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class AND : Instruction6502
     {
-        protected AND(AddrMode6502 mode) : base("AND", mode, Status6502.Zero | Status6502.Negative)
+        protected AND(byte bytesUsed, AddrMode6502 mode) : base("AND", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, byte data)
@@ -20,7 +20,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class AND_Immediate : AND
     {
-        public AND_Immediate() : base(AddrMode6502.Immediate)
+        public AND_Immediate() : base(2, AddrMode6502.Immediate)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class AND_ZeroPage : AND
     {
-        public AND_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public AND_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -48,7 +48,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class AND_ZeroPageX : AND
     {
-        public AND_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public AND_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -61,7 +61,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class AND_Absolute : AND
     {
-        public AND_Absolute() : base(AddrMode6502.Absolute)
+        public AND_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -75,7 +75,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class AND_IndirectIndexed : AND
     {
-        public AND_IndirectIndexed() : base(AddrMode6502.IndirectIndexed)
+        public AND_IndirectIndexed() : base(2, AddrMode6502.IndirectIndexed)
         {
         }
 
@@ -89,7 +89,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class AND_IndexedIndirect : AND
     {
-        public AND_IndexedIndirect() : base(AddrMode6502.IndexedIndirect)
+        public AND_IndexedIndirect() : base(2, AddrMode6502.IndexedIndirect)
         {
         }
 
@@ -104,7 +104,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class AND_AbsoluteX : AND
     {
-        public AND_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public AND_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 
@@ -118,7 +118,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class AND_AbsoluteY : AND
     {
-        public AND_AbsoluteY() : base(AddrMode6502.AbsoluteY)
+        public AND_AbsoluteY() : base(3, AddrMode6502.AbsoluteY)
         {
         }
 

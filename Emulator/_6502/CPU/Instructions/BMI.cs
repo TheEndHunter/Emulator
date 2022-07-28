@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class BMI : Instruction6502
     {
-        public BMI() : base("BMI", AddrMode6502.Relative, Status6502.None)
+        public BMI() : base("BMI", 2, AddrMode6502.Relative, Status6502.None)
         {
         }
 

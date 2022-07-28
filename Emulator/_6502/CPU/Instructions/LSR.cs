@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class LSR : Instruction6502
     {
-        protected LSR(AddrMode6502 mode) : base("LSR", mode, Status6502.Zero | Status6502.Negative)
+        protected LSR(byte bytesUsed, AddrMode6502 mode) : base("LSR", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, byte data)
@@ -19,7 +19,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LSR_Accumulator : LSR
     {
-        public LSR_Accumulator() : base(AddrMode6502.Accumulator)
+        public LSR_Accumulator() : base(1, AddrMode6502.Accumulator)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LSR_ZeroPage : LSR
     {
-        public LSR_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public LSR_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -51,7 +51,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LSR_Absolute : LSR
     {
-        public LSR_Absolute() : base(AddrMode6502.Absolute)
+        public LSR_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -69,7 +69,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LSR_ZeroPageX : LSR
     {
-        public LSR_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public LSR_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -86,7 +86,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LSR_AbsoluteX : LSR
     {
-        public LSR_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public LSR_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 

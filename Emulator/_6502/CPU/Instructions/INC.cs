@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class INC : Instruction6502
     {
-        protected INC(AddrMode6502 mode) : base("INC", mode, Status6502.Zero | Status6502.Negative)
+        protected INC(byte bytesUsed, AddrMode6502 mode) : base("INC", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, ushort data)
@@ -19,7 +19,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class INC_ZeroPage : INC
     {
-        public INC_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public INC_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class INC_Absolute : INC
     {
-        public INC_Absolute() : base(AddrMode6502.Absolute)
+        public INC_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -50,7 +50,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class INC_ZeroPageX : INC
     {
-        public INC_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public INC_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -65,7 +65,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class INC_AbsoluteX : INC
     {
-        public INC_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public INC_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 

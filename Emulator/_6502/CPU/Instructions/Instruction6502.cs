@@ -1,6 +1,7 @@
 ﻿using Emulator._6502.Devices;
 
 using System.Diagnostics;
+using System.Text;
 
 namespace Emulator._6502.CPU.Instructions
 {
@@ -16,20 +17,71 @@ namespace Emulator._6502.CPU.Instructions
         /// <param name="name"></param>
         /// <param name="addressMode"></param>
         /// <param name="flags"></param>
-        protected Instruction6502(string name, AddrMode6502 addressMode, Status6502 flags)
+        protected Instruction6502(string name, byte bytesUsed, AddrMode6502 addressMode, Status6502 flags)
         {
             Name = name;
             AddressMode = addressMode;
             Flags = flags;
+            BytesUsed = bytesUsed;
         }
         public string Name { get; }
         public AddrMode6502 AddressMode { get; }
         public Status6502 Flags { get; }
+        public byte BytesUsed { get; }
         public abstract byte Execute(Registers6502 registers, Bus6502 bus);
 
         public string GetDebuggerDisplay()
         {
             return $"{Name}[A:{AddressMode}][F:{Flags}]";
+        }
+
+        public string Dissassemble(Bus6502 bus, ref ushort addr)
+        {
+            StringBuilder sb = new();
+            sb.Append(Name);
+            sb.Append(' ');
+            if (BytesUsed == 2)
+            {
+                sb.Append(AddSymbols(AddressMode, bus.ReadByte(addr)));
+                addr++;
+            }
+            else if (BytesUsed == 3)
+            {
+                sb.Append(AddSymbols(AddressMode, bus.ReadWord(addr)));
+                addr += 2;
+            }
+            else if (BytesUsed > 3)
+                throw new InvalidCastException("The specified number of bytes used by this instruction is invalid");
+            return sb.ToString();
+        }
+
+        protected static string AddSymbols(AddrMode6502 mode, ushort data)
+        {
+            return mode switch
+            {
+                AddrMode6502.Accumulator => "A",
+                AddrMode6502.Absolute => $"${data:0xX4}",
+                AddrMode6502.AbsoluteX => $"${data:0xX4},X",
+                AddrMode6502.AbsoluteY => $"${data:0xX4},Y",
+                AddrMode6502.Relative => $"${data:0xX4}",
+                _ => string.Empty,
+            };
+        }
+
+        protected static string AddSymbols(AddrMode6502 mode, byte data)
+        {
+            return mode switch
+            {
+                AddrMode6502.Accumulator => "A",
+                AddrMode6502.Immediate => $"#${data:0xX2}",
+                AddrMode6502.Indirect => $"(${data:0xX2})",
+                AddrMode6502.IndexedIndirect => $"(${data:0xX2},X)",
+                AddrMode6502.IndirectIndexed => $"(${data:0xX2},Y",
+                AddrMode6502.ZeroPage => $"${data:0xX2}",
+                AddrMode6502.ZeroPageX => $"${data:0xX2},X",
+                AddrMode6502.ZeroPageY => $"${data:0xX2},Y",
+                _ => string.Empty,
+            };
         }
 
         /// <summary>

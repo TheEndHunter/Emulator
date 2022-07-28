@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class LDY : Instruction6502
     {
-        protected LDY(AddrMode6502 mode) : base("LDY", mode, Status6502.Zero | Status6502.Negative)
+        protected LDY(byte bytesUsed, AddrMode6502 mode) : base("LDY", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, byte data)
@@ -19,7 +19,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LDY_Immediate : LDY
     {
-        public LDY_Immediate() : base(AddrMode6502.Immediate)
+        public LDY_Immediate() : base(2, AddrMode6502.Immediate)
         {
         }
 
@@ -33,7 +33,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LDY_ZeroPage : LDY
     {
-        public LDY_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public LDY_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
 
@@ -46,7 +46,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LDY_Absolute : LDY
     {
-        public LDY_Absolute() : base(AddrMode6502.Absolute)
+        public LDY_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -60,7 +60,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class LDY_ZeroPageX : LDY
     {
-        public LDY_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public LDY_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
         }
 
@@ -73,7 +73,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class LDY_AbsoluteX : LDY
     {
-        public LDY_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public LDY_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
         }
 

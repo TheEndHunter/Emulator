@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class BCS : Instruction6502
     {
-        public BCS() : base("BCS", AddrMode6502.Relative, Status6502.None)
+        public BCS() : base("BCS", 2, AddrMode6502.Relative, Status6502.None)
         {
         }
 

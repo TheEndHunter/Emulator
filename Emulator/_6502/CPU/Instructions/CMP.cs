@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class CMP : Instruction6502
     {
-        protected CMP(AddrMode6502 mode) : base("CMP", mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
+        protected CMP(byte bytesUsed, AddrMode6502 mode) : base("CMP", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
         {
         }
         protected static void SetFlags(Registers6502 registers, byte fetched)
@@ -23,7 +23,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CMP_IndexedIndirect : CMP
     {
-        public CMP_IndexedIndirect() : base(AddrMode6502.IndexedIndirect)
+        public CMP_IndexedIndirect() : base(2, AddrMode6502.IndexedIndirect)
         {
 
         }
@@ -37,7 +37,7 @@ namespace Emulator._6502.CPU.Instructions
     }
     public sealed class CMP_IndirectIndexed : CMP
     {
-        public CMP_IndirectIndexed() : base(AddrMode6502.IndirectIndexed)
+        public CMP_IndirectIndexed() : base(2, AddrMode6502.IndirectIndexed)
         {
 
         }
@@ -51,7 +51,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CMP_ZeroPage : CMP
     {
-        public CMP_ZeroPage() : base(AddrMode6502.ZeroPage)
+        public CMP_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
 
         }
@@ -65,7 +65,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CMP_Immediate : CMP
     {
-        public CMP_Immediate() : base(AddrMode6502.Immediate)
+        public CMP_Immediate() : base(2, AddrMode6502.Immediate)
         {
 
         }
@@ -79,7 +79,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CMP_Absolute : CMP
     {
-        public CMP_Absolute() : base(AddrMode6502.Absolute)
+        public CMP_Absolute() : base(3, AddrMode6502.Absolute)
         {
 
         }
@@ -93,7 +93,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CMP_ZeroPageX : CMP
     {
-        public CMP_ZeroPageX() : base(AddrMode6502.ZeroPageX)
+        public CMP_ZeroPageX() : base(2, AddrMode6502.ZeroPageX)
         {
 
         }
@@ -107,7 +107,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CMP_AbsoluteY : CMP
     {
-        public CMP_AbsoluteY() : base(AddrMode6502.AbsoluteY)
+        public CMP_AbsoluteY() : base(3, AddrMode6502.AbsoluteY)
         {
 
         }
@@ -122,7 +122,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class CMP_AbsoluteX : CMP
     {
-        public CMP_AbsoluteX() : base(AddrMode6502.AbsoluteX)
+        public CMP_AbsoluteX() : base(3, AddrMode6502.AbsoluteX)
         {
 
         }

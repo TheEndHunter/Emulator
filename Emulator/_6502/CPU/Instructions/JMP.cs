@@ -4,14 +4,14 @@ namespace Emulator._6502.CPU.Instructions
 {
     public abstract class JMP : Instruction6502
     {
-        protected JMP(AddrMode6502 mode) : base("JMP", mode, Status6502.None)
+        protected JMP(byte bytesUsed, AddrMode6502 mode) : base("JMP", bytesUsed, mode, Status6502.None)
         {
         }
     }
 
     public sealed class JMP_Absolute : JMP
     {
-        public JMP_Absolute() : base(AddrMode6502.Absolute)
+        public JMP_Absolute() : base(3, AddrMode6502.Absolute)
         {
         }
 
@@ -24,7 +24,7 @@ namespace Emulator._6502.CPU.Instructions
 
     public sealed class JMP_Indirect : JMP
     {
-        public JMP_Indirect() : base(AddrMode6502.Indirect)
+        public JMP_Indirect() : base(3, AddrMode6502.Indirect)
         {
         }
 

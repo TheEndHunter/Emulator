@@ -4,7 +4,7 @@ namespace Emulator._6502.CPU.Instructions
 {
     public sealed class UnknownInstruction : Instruction6502
     {
-        public UnknownInstruction() : base("???", AddrMode6502.None, Status6502.None)
+        public UnknownInstruction() : base("???", 1, AddrMode6502.None, Status6502.None)
         {
 
         }
