@@ -8,9 +8,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var addr = Absolute(registers, bus);
+            var addr = Absolute(ref registers, bus);
             registers.PC -= 2;
             bus.Write((ushort)(0x0100 + registers.STKP), registers.PC);
             registers.STKP -= 2;

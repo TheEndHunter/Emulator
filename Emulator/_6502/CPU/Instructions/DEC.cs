@@ -7,7 +7,7 @@ namespace Emulator._6502.CPU.Instructions
         protected DEC(byte bytesUsed, AddrMode6502 mode) : base("DEC", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
-        protected static void SetFlags(Registers6502 registers, ushort data)
+        protected static void SetFlags(ref Registers6502 registers, ushort data)
         {
             // The Zero flag is set if the result is 0
             registers.SetFlag(Status6502.Zero, (data & 0x00FF) == 0);
@@ -23,12 +23,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var addr = ZeroPage(registers, bus);
+            var addr = ZeroPage(ref registers, bus);
             var t = (ushort)(bus.ReadByte(addr) - 1);
             bus.Write(addr, (byte)(t & 0x00FF));
-            SetFlags(registers, t);
+            SetFlags(ref registers, t);
             return 5;
         }
     }
@@ -38,12 +38,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var addr = Absolute(registers, bus);
+            var addr = Absolute(ref registers, bus);
             var t = (ushort)(bus.ReadByte(addr) - 1);
             bus.Write(addr, (byte)(t & 0x00FF));
-            SetFlags(registers, t);
+            SetFlags(ref registers, t);
             return 6;
         }
     }
@@ -54,12 +54,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var addr = ZeroPageX(registers, bus);
+            var addr = ZeroPageX(ref registers, bus);
             var t = (ushort)(bus.ReadByte(addr) - 1);
             bus.Write(addr, (byte)(t & 0x00FF));
-            SetFlags(registers, t);
+            SetFlags(ref registers, t);
             return 6;
         }
     }
@@ -69,12 +69,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var addr = AbsoluteX(registers, bus).addr;
+            var addr = AbsoluteX(ref registers, bus).addr;
             var t = (ushort)(bus.ReadByte(addr) - 1);
             bus.Write(addr, (byte)(t & 0x00FF));
-            SetFlags(registers, t);
+            SetFlags(ref registers, t);
             return 7;
         }
     }

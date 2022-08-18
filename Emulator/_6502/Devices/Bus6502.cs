@@ -1,5 +1,9 @@
-﻿namespace Emulator._6502.Devices
+﻿using System.Diagnostics;
+using System.Text;
+
+namespace Emulator._6502.Devices
 {
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class Bus6502
     {
         public Bus6502()
@@ -112,6 +116,17 @@
                 }
             }
             return 0;
+        }
+
+        public string GetDebuggerDisplay()
+        {
+            StringBuilder sb = new();
+
+            foreach (var i in MemoryMap)
+            {
+                sb.AppendLine($"\t0x{i.Key.StartAddress:x4}-0x{i.Key.EndAddress:x4}: {i.Value.GetDebuggerDisplay()}");
+            }
+            return sb.ToString();
         }
     }
 }

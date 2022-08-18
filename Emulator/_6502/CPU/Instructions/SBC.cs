@@ -7,7 +7,7 @@ namespace Emulator._6502.CPU.Instructions
         protected SBC(byte bytesUsed, AddrMode6502 mode) : base("SBC", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
         {
         }
-        protected static void SetFlags(Registers6502 registers, ushort temp, ushort value)
+        protected static void SetFlags(ref Registers6502 registers, ushort temp, ushort value)
         {
 
             // The carry flag out exists in the high byte bit 0
@@ -30,11 +30,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            ushort data = (ushort)(bus.ReadByte(Immediate(registers, bus)) ^ 0x00FF);
+            ushort data = (ushort)(bus.ReadByte(Immediate(ref registers, bus)) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return 2;
         }
@@ -46,12 +46,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = IndexIndirect(registers, bus);
+            var (addr, clocks) = IndexIndirect(ref registers, bus);
             ushort data = (ushort)(bus.ReadByte(addr) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return (byte)(5 + clocks);
         }
@@ -63,11 +63,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            ushort data = (ushort)(bus.ReadByte(IndirectIndex(registers, bus)) ^ 0x00FF);
+            ushort data = (ushort)(bus.ReadByte(IndirectIndex(ref registers, bus)) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return 6;
         }
@@ -79,11 +79,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            ushort data = (ushort)(bus.ReadByte(ZeroPage(registers, bus)) ^ 0x00FF);
+            ushort data = (ushort)(bus.ReadByte(ZeroPage(ref registers, bus)) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return 3;
         }
@@ -94,11 +94,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            ushort data = (ushort)(bus.ReadByte(Absolute(registers, bus)) ^ 0x00FF);
+            ushort data = (ushort)(bus.ReadByte(Absolute(ref registers, bus)) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return 4;
         }
@@ -110,11 +110,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            ushort data = (ushort)(bus.ReadByte(ZeroPageX(registers, bus)) ^ 0x00FF);
+            ushort data = (ushort)(bus.ReadByte(ZeroPageX(ref registers, bus)) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return 4;
         }
@@ -125,12 +125,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = AbsoluteX(registers, bus);
+            var (addr, clocks) = AbsoluteX(ref registers, bus);
             ushort data = (ushort)(bus.ReadByte(addr) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return (byte)(4 + clocks);
         }
@@ -141,12 +141,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = AbsoluteY(registers, bus);
+            var (addr, clocks) = AbsoluteY(ref registers, bus);
             ushort data = (ushort)(bus.ReadByte(addr) ^ 0x00FF);
             ushort temp = (ushort)(registers.A + data + (ushort)(registers.GetFlag(Status6502.Carry) ? 0x0001 : 0x0000));
-            SetFlags(registers, temp, data);
+            SetFlags(ref registers, temp, data);
             registers.A = (byte)(temp & 0x00FF);
             return (byte)(4 + clocks);
         }

@@ -8,7 +8,7 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        protected static void SetFlags(Registers6502 registers, byte data, ushort value)
+        protected static void SetFlags(ref Registers6502 registers, byte data, ushort value)
         {
             // The carry flag out exists in the high byte bit 0
             registers.SetFlag(Status6502.Carry, value > 255);
@@ -29,12 +29,12 @@ namespace Emulator._6502.CPU.Instructions
         public ADC_ZeroPage() : base(2, AddrMode6502.ZeroPage)
         {
         }
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            byte fetched = bus.ReadByte(ZeroPage(registers, bus));
+            byte fetched = bus.ReadByte(ZeroPage(ref registers, bus));
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return 3;
         }
     }
@@ -45,12 +45,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            byte fetched = bus.ReadByte(ZeroPageX(registers, bus));
+            byte fetched = bus.ReadByte(ZeroPageX(ref registers, bus));
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return 4;
         }
     }
@@ -60,12 +60,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            byte fetched = bus.ReadByte(Absolute(registers, bus));
+            byte fetched = bus.ReadByte(Absolute(ref registers, bus));
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return 4;
         }
     }
@@ -76,12 +76,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            byte fetched = bus.ReadByte(Immediate(registers, bus));
+            byte fetched = bus.ReadByte(Immediate(ref registers, bus));
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return 2;
         }
     }
@@ -92,12 +92,12 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            byte fetched = bus.ReadByte(IndirectIndex(registers, bus));
+            byte fetched = bus.ReadByte(IndirectIndex(ref registers, bus));
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return 6;
         }
     }
@@ -108,13 +108,13 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = IndexIndirect(registers, bus);
+            var (addr, clocks) = IndexIndirect(ref registers, bus);
             byte fetched = bus.ReadByte(addr);
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return (byte)(clocks + 5);
         }
     }
@@ -125,13 +125,13 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = AbsoluteX(registers, bus);
+            var (addr, clocks) = AbsoluteX(ref registers, bus);
             byte fetched = bus.ReadByte(addr);
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return (byte)(clocks + 4);
         }
     }
@@ -141,13 +141,13 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = AbsoluteY(registers, bus);
+            var (addr, clocks) = AbsoluteY(ref registers, bus);
             byte fetched = bus.ReadByte(addr);
             ushort temp = (ushort)(registers.A + fetched + (ushort)(registers.Status.HasFlag(Status6502.Carry) ? 1 : 0));
             registers.A = (byte)(temp & 0x00FF);
-            SetFlags(registers, fetched, temp);
+            SetFlags(ref registers, fetched, temp);
             return (byte)(clocks + 4);
         }
     }

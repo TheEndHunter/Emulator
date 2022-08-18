@@ -6,10 +6,24 @@
         public Ram6502() : base("RAM")
         {
             convertEdian = !BitConverter.IsLittleEndian;
-            memory = new byte[0xFFFF];
+            memory = new byte[0xFFFF + 1];
         }
 
         private readonly byte[] memory;
+
+        public void LoadData(byte[] bytes)
+        {
+            bytes.CopyTo(memory, 0);
+        }
+
+        public void LoadData(ushort addr, byte[] bytes)
+        {
+            bytes.CopyTo(memory, addr);
+        }
+        public void LoadData(byte addr, byte[] bytes)
+        {
+            bytes.CopyTo(memory, BitConverter.IsLittleEndian ? BitConverter.ToInt16(new[] { (byte)0x00, addr }, 0) : BitConverter.ToInt16(new[] { addr, (byte)0x00 }, 0));
+        }
 
         public override byte ReadByte(ushort addr)
         {
@@ -19,8 +33,7 @@
         public override ushort ReadWord(ushort addr)
         {
             var byte1 = ReadByte(addr);
-            ushort addr2 = (ushort)(addr + 1);
-            var byte2 = ReadByte(addr2);
+            var byte2 = ReadByte((ushort)(addr + 1));
 
             if (convertEdian)
             {
@@ -43,12 +56,12 @@
             if (convertEdian)
             {
                 Write(addr, bytes[1]);
-                Write((ushort)(addr + 1u), bytes[0]);
+                Write((ushort)(addr + 1), bytes[0]);
             }
             else
             {
                 Write(addr, bytes[0]);
-                Write((ushort)(addr + 1u), bytes[1]);
+                Write((ushort)(addr + 1), bytes[1]);
             }
         }
     }

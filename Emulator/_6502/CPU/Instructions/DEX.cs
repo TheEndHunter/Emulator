@@ -7,7 +7,7 @@ namespace Emulator._6502.CPU.Instructions
         public DEX() : base("DEX", 1, AddrMode6502.Implied, Status6502.Zero | Status6502.Negative)
         {
         }
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
             registers.X--;
             registers.SetFlag(Status6502.Zero, registers.X == 0x00);

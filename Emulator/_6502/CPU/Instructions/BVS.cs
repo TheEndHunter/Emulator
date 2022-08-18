@@ -8,9 +8,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var addr = Relative(registers, bus);
+            var addr = Relative(ref registers, bus);
             var jaddr = bus.ReadWord(addr);
             byte clocks = 2;
             if (registers.GetFlag(Status6502.OverFlow))

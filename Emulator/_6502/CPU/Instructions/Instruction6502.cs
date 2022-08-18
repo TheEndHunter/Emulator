@@ -28,7 +28,7 @@ namespace Emulator._6502.CPU.Instructions
         public AddrMode6502 AddressMode { get; }
         public Status6502 Flags { get; }
         public byte BytesUsed { get; }
-        public abstract byte Execute(Registers6502 registers, Bus6502 bus);
+        public abstract byte Execute(ref Registers6502 registers, Bus6502 bus);
 
         public string GetDebuggerDisplay()
         {
@@ -59,11 +59,18 @@ namespace Emulator._6502.CPU.Instructions
         {
             return mode switch
             {
+                AddrMode6502.Immediate => $"#${data:X2}",
+                AddrMode6502.Indirect => $"(${data:X2})",
+                AddrMode6502.IndexedIndirect => $"(${data:X2},X)",
+                AddrMode6502.IndirectIndexed => $"(${data:X2}),Y",
+                AddrMode6502.ZeroPage => $"${data:X2}",
+                AddrMode6502.ZeroPageX => $"${data:X2},X",
+                AddrMode6502.ZeroPageY => $"${data:X2},Y",
+                AddrMode6502.Relative => $"${data:X2}",
                 AddrMode6502.Accumulator => "A",
-                AddrMode6502.Absolute => $"${data:0xX4}",
-                AddrMode6502.AbsoluteX => $"${data:0xX4},X",
-                AddrMode6502.AbsoluteY => $"${data:0xX4},Y",
-                AddrMode6502.Relative => $"${data:0xX4}",
+                AddrMode6502.Absolute => $"${data:X4}",
+                AddrMode6502.AbsoluteX => $"${data:X4},X",
+                AddrMode6502.AbsoluteY => $"${data:X4},Y",
                 _ => string.Empty,
             };
         }
@@ -72,14 +79,18 @@ namespace Emulator._6502.CPU.Instructions
         {
             return mode switch
             {
+                AddrMode6502.Immediate => $"#${data:X2}",
+                AddrMode6502.Indirect => $"(${data:X2})",
+                AddrMode6502.IndexedIndirect => $"(${data:X2},X)",
+                AddrMode6502.IndirectIndexed => $"(${data:X2}),Y",
+                AddrMode6502.ZeroPage => $"${data:X2}",
+                AddrMode6502.ZeroPageX => $"${data:X2},X",
+                AddrMode6502.ZeroPageY => $"${data:X2},Y",
+                AddrMode6502.Relative => $"${data:X2}",
                 AddrMode6502.Accumulator => "A",
-                AddrMode6502.Immediate => $"#${data:0xX2}",
-                AddrMode6502.Indirect => $"(${data:0xX2})",
-                AddrMode6502.IndexedIndirect => $"(${data:0xX2},X)",
-                AddrMode6502.IndirectIndexed => $"(${data:0xX2},Y",
-                AddrMode6502.ZeroPage => $"${data:0xX2}",
-                AddrMode6502.ZeroPageX => $"${data:0xX2},X",
-                AddrMode6502.ZeroPageY => $"${data:0xX2},Y",
+                AddrMode6502.Absolute => $"${data:X4}",
+                AddrMode6502.AbsoluteX => $"${data:X4},X",
+                AddrMode6502.AbsoluteY => $"${data:X4},Y",
                 _ => string.Empty,
             };
         }
@@ -88,7 +99,7 @@ namespace Emulator._6502.CPU.Instructions
         /// hi byte for some addressing modes
         /// </summary>
         private const byte hi = 0;
-        protected static ushort ZeroPage(Registers6502 registers, Bus6502 bus)
+        protected static ushort ZeroPage(ref Registers6502 registers, Bus6502 bus)
         {
             var lo = bus.ReadByte(registers.PC++);
             if (BitConverter.IsLittleEndian)
@@ -100,11 +111,11 @@ namespace Emulator._6502.CPU.Instructions
                 return BitConverter.ToUInt16(new[] { hi, lo }, 0);
             }
         }
-        protected static ushort Immediate(Registers6502 registers, Bus6502 bus)
+        protected static ushort Immediate(ref Registers6502 registers, Bus6502 bus)
         {
             return registers.PC++;
         }
-        protected static ushort ZeroPageX(Registers6502 registers, Bus6502 bus)
+        protected static ushort ZeroPageX(ref Registers6502 registers, Bus6502 bus)
         {
             byte lo = (byte)(bus.ReadByte(registers.PC++) + registers.X);
             if (BitConverter.IsLittleEndian)
@@ -116,7 +127,7 @@ namespace Emulator._6502.CPU.Instructions
                 return BitConverter.ToUInt16(new[] { hi, lo }, 0);
             }
         }
-        protected static ushort ZeroPageY(Registers6502 registers, Bus6502 bus)
+        protected static ushort ZeroPageY(ref Registers6502 registers, Bus6502 bus)
         {
             byte lo = (byte)(bus.ReadByte(registers.PC++) + registers.Y);
             if (BitConverter.IsLittleEndian)
@@ -128,13 +139,13 @@ namespace Emulator._6502.CPU.Instructions
                 return BitConverter.ToUInt16(new[] { hi, lo }, 0);
             }
         }
-        protected static ushort Absolute(Registers6502 registers, Bus6502 bus)
+        protected static ushort Absolute(ref Registers6502 registers, Bus6502 bus)
         {
             var ret = bus.ReadWord(registers.PC);
             registers.PC += 2;
             return ret;
         }
-        public static (ushort addr, byte clocks) AbsoluteX(Registers6502 registers, Bus6502 bus)
+        public static (ushort addr, byte clocks) AbsoluteX(ref Registers6502 registers, Bus6502 bus)
         {
             ushort addr = registers.PC;
             registers.PC += 2;
@@ -149,7 +160,7 @@ namespace Emulator._6502.CPU.Instructions
                 return (val, 0);
             }
         }
-        public static (ushort addr, byte clocks) AbsoluteY(Registers6502 registers, Bus6502 bus)
+        public static (ushort addr, byte clocks) AbsoluteY(ref Registers6502 registers, Bus6502 bus)
         {
             ushort addr = registers.PC;
             registers.PC += 2;
@@ -164,7 +175,7 @@ namespace Emulator._6502.CPU.Instructions
                 return (val, 0);
             }
         }
-        public static ushort Indirect(Registers6502 registers, Bus6502 bus, bool useFixedBehavior = false)
+        public static ushort Indirect(ref Registers6502 registers, Bus6502 bus, bool useFixedBehavior = false)
         {
             ushort addr = bus.ReadWord(registers.PC);
             registers.PC += 2;
@@ -196,7 +207,7 @@ namespace Emulator._6502.CPU.Instructions
         /// <param name="registers">The registers.</param>
         /// <param name="bus">The bus.</param>
         /// <returns></returns>
-        public static ushort IndirectIndex(Registers6502 registers, Bus6502 bus)
+        public static ushort IndirectIndex(ref Registers6502 registers, Bus6502 bus)
         {
             return bus.ReadWord((byte)(bus.ReadByte(registers.PC++) + registers.X));
         }
@@ -206,7 +217,7 @@ namespace Emulator._6502.CPU.Instructions
         /// <param name="registers">The registers.</param>
         /// <param name="bus">The bus.</param>
         /// <returns></returns>
-        public static (ushort addr, byte clocks) IndexIndirect(Registers6502 registers, Bus6502 bus)
+        public static (ushort addr, byte clocks) IndexIndirect(ref Registers6502 registers, Bus6502 bus)
         {
             ushort addr = registers.PC;
             registers.PC += 2;
@@ -221,7 +232,7 @@ namespace Emulator._6502.CPU.Instructions
                 return (val, 0);
             }
         }
-        public static ushort Relative(Registers6502 registers, Bus6502 bus)
+        public static ushort Relative(ref Registers6502 registers, Bus6502 bus)
         {
             ushort loc = bus.ReadByte(registers.PC++);
 

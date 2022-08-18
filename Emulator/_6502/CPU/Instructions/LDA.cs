@@ -7,7 +7,7 @@ namespace Emulator._6502.CPU.Instructions
         protected LDA(byte bytesUsed, AddrMode6502 mode) : base("LDA", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
         {
         }
-        protected static void SetFlags(Registers6502 registers, byte data)
+        protected static void SetFlags(ref Registers6502 registers, byte data)
         {
             // The Zero flag is set if the result is 0
             registers.SetFlag(Status6502.Zero, data == 0x00);
@@ -23,10 +23,10 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            registers.A = bus.ReadByte(Immediate(registers, bus));
-            SetFlags(registers, registers.A);
+            registers.A = bus.ReadByte(Immediate(ref registers, bus));
+            SetFlags(ref registers, registers.A);
             return 2;
         }
     }
@@ -37,11 +37,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = IndexIndirect(registers, bus);
+            var (addr, clocks) = IndexIndirect(ref registers, bus);
             registers.A = bus.ReadByte(addr);
-            SetFlags(registers, registers.A);
+            SetFlags(ref registers, registers.A);
             return (byte)(5 + clocks);
         }
     }
@@ -51,10 +51,10 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            registers.A = bus.ReadByte(IndirectIndex(registers, bus));
-            SetFlags(registers, registers.A);
+            registers.A = bus.ReadByte(IndirectIndex(ref registers, bus));
+            SetFlags(ref registers, registers.A);
             return 6;
         }
     }
@@ -65,10 +65,10 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            registers.A = bus.ReadByte(ZeroPage(registers, bus));
-            SetFlags(registers, registers.A);
+            registers.A = bus.ReadByte(ZeroPage(ref registers, bus));
+            SetFlags(ref registers, registers.A);
             return 3;
         }
     }
@@ -78,10 +78,10 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            registers.A = bus.ReadByte(Absolute(registers, bus));
-            SetFlags(registers, registers.A);
+            registers.A = bus.ReadByte(Absolute(ref registers, bus));
+            SetFlags(ref registers, registers.A);
             return 4;
         }
     }
@@ -92,10 +92,10 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            registers.A = bus.ReadByte(ZeroPageX(registers, bus));
-            SetFlags(registers, registers.A);
+            registers.A = bus.ReadByte(ZeroPageX(ref registers, bus));
+            SetFlags(ref registers, registers.A);
             return 4;
         }
     }
@@ -105,11 +105,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = AbsoluteX(registers, bus);
+            var (addr, clocks) = AbsoluteX(ref registers, bus);
             registers.A = bus.ReadByte(addr);
-            SetFlags(registers, registers.A);
+            SetFlags(ref registers, registers.A);
             return (byte)(4 + clocks);
         }
     }
@@ -119,11 +119,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            var (addr, clocks) = AbsoluteY(registers, bus);
+            var (addr, clocks) = AbsoluteY(ref registers, bus);
             registers.A = bus.ReadByte(addr);
-            SetFlags(registers, registers.A);
+            SetFlags(ref registers, registers.A);
             return (byte)(4 + clocks);
         }
     }

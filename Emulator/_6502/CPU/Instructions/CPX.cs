@@ -7,7 +7,7 @@ namespace Emulator._6502.CPU.Instructions
         protected CPX(byte bytesUsed, AddrMode6502 mode) : base("CPX", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
         {
         }
-        protected static void SetFlags(Registers6502 registers, byte fetched)
+        protected static void SetFlags(ref Registers6502 registers, byte fetched)
         {
             var temp = registers.X - fetched;
             // The carry flag out exists in the high byte bit 0
@@ -28,9 +28,9 @@ namespace Emulator._6502.CPU.Instructions
 
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            SetFlags(registers, bus.ReadByte(Immediate(registers, bus)));
+            SetFlags(ref registers, bus.ReadByte(Immediate(ref registers, bus)));
             return 2;
         }
     }
@@ -41,9 +41,9 @@ namespace Emulator._6502.CPU.Instructions
 
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            SetFlags(registers, bus.ReadByte(Absolute(registers, bus)));
+            SetFlags(ref registers, bus.ReadByte(Absolute(ref registers, bus)));
             return 4;
         }
     }
@@ -55,9 +55,9 @@ namespace Emulator._6502.CPU.Instructions
 
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            SetFlags(registers, bus.ReadByte(ZeroPage(registers, bus)));
+            SetFlags(ref registers, bus.ReadByte(ZeroPage(ref registers, bus)));
             return 3;
         }
     }

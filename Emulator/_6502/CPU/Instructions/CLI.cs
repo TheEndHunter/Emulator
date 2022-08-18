@@ -8,7 +8,7 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
             registers.SetFlag(Status6502.InterruptDisable, false);
             return 2;

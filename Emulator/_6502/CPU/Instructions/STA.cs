@@ -15,9 +15,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(IndexIndirect(registers, bus).addr), registers.A);
+            bus.Write(bus.ReadWord(IndexIndirect(ref registers, bus).addr), registers.A);
             return 6;
         }
     }
@@ -28,9 +28,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(IndirectIndex(registers, bus)), registers.A);
+            bus.Write(bus.ReadWord(IndirectIndex(ref registers, bus)), registers.A);
             return 6;
         }
     }
@@ -41,9 +41,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(ZeroPage(registers, bus)), registers.A);
+            bus.Write(bus.ReadWord(ZeroPage(ref registers, bus)), registers.A);
             return 3;
         }
     }
@@ -53,9 +53,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(Absolute(registers, bus)), registers.A);
+            bus.Write(bus.ReadWord(Absolute(ref registers, bus)), registers.A);
             return 4;
         }
     }
@@ -66,9 +66,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(ZeroPageX(registers, bus)), registers.A);
+            bus.Write(bus.ReadWord(ZeroPageX(ref registers, bus)), registers.A);
             return 4;
         }
     }
@@ -78,9 +78,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(AbsoluteX(registers, bus).addr), registers.A);
+            bus.Write(bus.ReadWord(AbsoluteX(ref registers, bus).addr), registers.A);
             return 5;
         }
     }
@@ -90,9 +90,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(AbsoluteY(registers, bus).addr), registers.A);
+            bus.Write(bus.ReadWord(AbsoluteY(ref registers, bus).addr), registers.A);
             return 5;
         }
     }

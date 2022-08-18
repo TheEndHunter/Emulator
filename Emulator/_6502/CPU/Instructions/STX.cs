@@ -15,9 +15,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(ZeroPage(registers, bus)), registers.X);
+            bus.Write(bus.ReadWord(ZeroPage(ref registers, bus)), registers.X);
             return 3;
         }
     }
@@ -27,9 +27,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(Absolute(registers, bus)), registers.X);
+            bus.Write(bus.ReadWord(Absolute(ref registers, bus)), registers.X);
             return 4;
         }
     }
@@ -40,9 +40,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            bus.Write(bus.ReadWord(ZeroPageY(registers, bus)), registers.X);
+            bus.Write(bus.ReadWord(ZeroPageY(ref registers, bus)), registers.X);
             return 4;
         }
     }

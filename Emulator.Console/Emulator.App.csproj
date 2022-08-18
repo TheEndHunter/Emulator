@@ -10,4 +10,29 @@
   <ItemGroup>
     <ProjectReference Include="..\Emulator\Emulator.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Roms\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silk.NET.Core" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.Input" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.Input.Common" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.Maths" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.OpenCL" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.15.0" />
+    <PackageReference Include="Silk.NET.Windowing.Common" Version="2.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Roms\AddressingModeTest.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Roms\MaxValueTest.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

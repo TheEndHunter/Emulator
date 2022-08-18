@@ -15,9 +15,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            registers.PC = Absolute(registers, bus);
+            registers.PC = Absolute(ref registers, bus);
             return 3;
         }
     }
@@ -28,9 +28,9 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            registers.PC = Indirect(registers, bus);
+            registers.PC = Indirect(ref registers, bus);
             return 5;
         }
     }

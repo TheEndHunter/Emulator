@@ -8,7 +8,7 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        protected static void SetFlags(Registers6502 registers, ushort data, byte fetch)
+        protected static void SetFlags(ref Registers6502 registers, ushort data, byte fetch)
         {
             registers.SetFlag(Status6502.Zero, (data & 0x00FF) == 0x00);
 
@@ -24,11 +24,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            byte f = bus.ReadByte(ZeroPage(registers, bus));
+            byte f = bus.ReadByte(ZeroPage(ref registers, bus));
             ushort t = (ushort)(registers.A & f);
-            SetFlags(registers, t, f);
+            SetFlags(ref registers, t, f);
             return 3;
         }
     }
@@ -38,11 +38,11 @@ namespace Emulator._6502.CPU.Instructions
         {
         }
 
-        public override byte Execute(Registers6502 registers, Bus6502 bus)
+        public override byte Execute(ref Registers6502 registers, Bus6502 bus)
         {
-            byte f = bus.ReadByte(Absolute(registers, bus));
+            byte f = bus.ReadByte(Absolute(ref registers, bus));
             ushort t = (ushort)(registers.A & f);
-            SetFlags(registers, t, f);
+            SetFlags(ref registers, t, f);
             return 4;
         }
     }

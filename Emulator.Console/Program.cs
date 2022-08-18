@@ -15,9 +15,8 @@ namespace Emulator.App
         /// <returns>Exit Code</returns>
         public static int Main(params string[] args)
         {
-            var instruct = new InstructionSet6502();
-            var reg = new Registers6502();
             var ram = new Ram6502();
+
             var bus = new Bus6502();
             bus.RegisterDevice(new AddressRange6502() { StartAddress = 0x0000, EndAddress = 0xFFFF }, ram);
 
@@ -43,12 +42,26 @@ namespace Emulator.App
                 Console.ReadKey();
                 return 1;
             }
+            string path = Path.Combine("Roms", "MaxValueTest.bin");
+            var data = File.ReadAllBytes(path);
+            ram.LoadData(data);
+            var cpu = new Cpu6502(ref bus);
+            cpu.Reset();
+            var dis = cpu.DecompileOpcodes(0, 19);
+            foreach (var i in dis)
+            {
+                Console.Write(i);
+            }
 
-            instruct[0x00].Execute(reg, bus);
+            cpu.Reset();
+            Console.WriteLine(cpu.GetDebuggerDisplay());
+            cpu.Execute();
+            Console.WriteLine(cpu.GetDebuggerDisplay());
 
-
-            Console.WriteLine("Successfully to read/write byte & word");
             Console.ReadKey();
+
+
+
             return 0;
         }
     }
