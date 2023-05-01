@@ -1,10 +1,18 @@
-# Emulator
+#Emulator
 
-A Multi-Platform, Multi-System Emulator written entirely in C#.
+An Emulation library written in C#
+A cross-platform, multi-system emulation library written entirely in C#,
+Which will allow you to connect any compatible device to a cpu that can run it.
 
-will work by Emulating indivual devices(CPU, RAM,etc) and other devices that connect through a bus system that allows for dynamic mapping of devices togther into a "System".
-
-
-#Planned Support
-6502 CPU Support(Including illegal instruction emulation mode)
+##Goals
+- Add Full MOS6502 CPU(Including illegal instructions)
+- Add Support for emulated NES Hardware(PPU, cartridge,etc)
+- Add Mouse + keyboard support
+- Add Controller/JoyStick Support
+- Add Support for plugins(Add devices, Cpus, etc using a known interface and Attribute tags)
+- Add full debugger support for stepping through code being executed on the "CPU"
+- Add 8080 Support
+- Add Z80 Support
+- Add Sharp LR35902
+- Add Gameboy Hardware Support
 
