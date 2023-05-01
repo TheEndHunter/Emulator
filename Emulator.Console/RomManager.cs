@@ -158,7 +158,6 @@ namespace Emulator.App
             }
         }
 
-        private const string filter = "*.bin | *.Bin | *.bIn | *.biN | *.BIn | *.bIN | *.BiN | *.BIN | *.rom | *.Rom | *.rOm | *.roM | *.ROm | *.rOM | *.RoM | *.ROM";
         public readonly string DisassemblyDir;
 
         public bool RequiresUpdate { get; set; }

@@ -183,11 +183,8 @@ namespace Emulator._6502
                 {
                     return m_Instructions[opcode];
                 }
-                else
-                {
-                    Console.WriteLine($"Unknown Opcode {opcode:X2} attempted to execute");
-                    return m_Unknown;
-                }
+                Console.WriteLine($"Unknown Opcode {opcode:X2} attempted to execute");
+                return m_Unknown;
             }
         }
     }

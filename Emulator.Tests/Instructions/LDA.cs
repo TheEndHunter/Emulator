@@ -1,10 +1,7 @@
-﻿using Emulator._6502;
-using Emulator.NES.Devices;
-
-using System.Net.NetworkInformation;
-
+﻿using Emulator.NES.Devices;
 namespace Emulator.Tests.Instructions
 {
+
     [TestClass]
     public sealed class LDA : InstructionTests6502
     {

@@ -22,20 +22,7 @@ namespace Emulator.Tests.Instructions
 
 
             byte[] bytes = new byte[2];
-            byte rLo;
-            byte rHi;
             BinaryPrimitives.WriteUInt16LittleEndian(bytes, (ushort)(resetVector + 1));
-
-            if (BitConverter.IsLittleEndian)
-            {
-                rLo = bytes[0];
-                rHi = bytes[1];
-            }
-            else
-            {
-                rLo = bytes[1];
-                rHi = bytes[0];
-            }
 
             Cpu.Reset();
 

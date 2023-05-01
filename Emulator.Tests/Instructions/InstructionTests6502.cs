@@ -44,7 +44,7 @@ namespace Emulator.Tests.Instructions
             return SetStatus(current, Status6502.InterruptDisable, set);
         }
 
-        private Status6502 SetStatus(Status6502 current, Status6502 flag, bool condition)
+        public Status6502 SetStatus(Status6502 current, Status6502 flag, bool condition)
         {
             Status6502 status = current;
             if (condition)

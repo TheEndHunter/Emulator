@@ -11,10 +11,8 @@ namespace Emulator.App
     /// </summary>
     internal static class Program
     {
-        private static CancellationTokenSource _TokenSource;
         public static async Task<int> Main()
         {
-            _TokenSource = new CancellationTokenSource();
             Cpu6502 cpu = new();
 
             Ram6502 ram = new();
@@ -81,10 +79,9 @@ namespace Emulator.App
                 Console.WriteLine(string.Empty);
                 Console.Write("Would you like to save the disassembly?(y/n): ");
 
-                var t = Console.GetCursorPosition();
+                var (Left, Top) = Console.GetCursorPosition();
 
                 ConsoleKeyInfo keyinfo;
-                bool validKey = true;
                 do
                 {
                     keyinfo = Console.ReadKey();
@@ -114,7 +111,7 @@ namespace Emulator.App
                     }
                     else
                     {
-                        Console.SetCursorPosition(t.Left, t.Top);
+                        Console.SetCursorPosition(Left, Top);
                     }
                 }
                 while (true);

@@ -5,7 +5,7 @@ A cross-platform, multi-system emulation library written entirely in C#,
 Which will allow you to connect any compatible device to a cpu that can run it.
 
 ## Goals
-- Add Full MOS6502 CPU(Including illegal instructions)
+- Add Full 6502/65C02 CPU(Including Illegal/Improved instructions(set a value at instance creation to control))
 - Add Support for emulated NES Hardware(PPU, cartridge,etc)
 - Add Mouse + keyboard support
 - Add Controller/JoyStick Support

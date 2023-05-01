@@ -8,7 +8,6 @@
         }
         public NESCartridge(StreamReader romSource)
         {
-
         }
     }
 }

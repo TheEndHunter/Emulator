@@ -10,19 +10,61 @@ namespace Emulator._6502.Instructions
         {
         }
 
-        protected static void SetFlags(ref Cpu6502 cpu, byte data, ushort value)
+        protected static void SetFlags(ref Cpu6502 cpu, byte fetched, ushort sum)
         {
-            // The carry flag out exists in the high byte bit 0
-            cpu.SetFlag(Status6502.Carry, value > 255);
+            cpu.SetFlag(Status6502.Zero, (byte)(sum & 0xFF) == 0);
 
-            // The Zero flag is set if the result is 0
-            cpu.SetFlag(Status6502.Zero, (value & 0x00FF) == 0);
+            if (cpu.Status.HasFlag(Status6502.Decimal))
+            {
+                cpu.SetFlag(Status6502.Carry, sum > 0x99);
+                cpu.SetFlag(Status6502.Negative, (sum & 0x80) != 0);
 
-            // The signed Overflow flag is set based on all that up there! :D
-            cpu.SetFlag(Status6502.OverFlow, (~(cpu.A ^ data) & (cpu.A ^ value) & 0x0080) > 0);
+                byte twosCompA = (byte)((cpu.A & 0x80) != 0 ? cpu.A - 0x100 : cpu.A);
+                byte twosCompFetched = (byte)((fetched & 0x80) != 0 ? fetched - 0x100 : fetched);
+                short twosCompSum = (short)(twosCompA + twosCompFetched + (cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
 
-            // The negative flag is set to the most significant bit of the result
-            cpu.SetFlag(Status6502.Negative, (value & 0x80) > 0);
+                cpu.SetFlag(Status6502.OverFlow, twosCompSum is > 127 or < (-128));
+            }
+            else
+            {
+                cpu.SetFlag(Status6502.Carry, sum > 0xFF);
+                cpu.SetFlag(Status6502.Negative, (sum & 0x80) != 0);
+                cpu.SetFlag(Status6502.OverFlow, (((cpu.A ^ fetched) ^ (cpu.A ^ sum)) & 0x80) != 0);
+            }
+        }
+
+        public static void BinaryMode(ref Cpu6502 cpu, byte fetched)
+        {
+            ushort sum = (ushort)(cpu.A + fetched + (cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+
+            cpu.A = (byte)sum;
+            SetFlags(ref cpu, fetched, sum);
+        }
+
+        public static void DecimalMode(ref Cpu6502 cpu, byte fetched)
+        {
+            ushort tempA = (byte)(cpu.A & 0x0F);
+            ushort tempB = (byte)(fetched & 0x0F);
+
+            ushort tempSum = (byte)(tempA + tempB + (cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
+
+            if (tempSum > 9)
+            {
+                tempSum = (byte)(((tempSum - 10) & 0x0F) + 0x10);
+            }
+
+            tempA = (byte)((cpu.A & 0xF0) + (fetched & 0xF0) + tempSum);
+
+            bool b = tempA > 0x99;
+            if (b)
+            {
+                cpu.A = (byte)(tempA + 0x60);
+            }
+            else
+            {
+                cpu.A = (byte)tempA;
+            }
+            SetFlags(ref cpu, fetched, tempA);
         }
     }
 
@@ -34,25 +76,12 @@ namespace Emulator._6502.Instructions
         public override byte Execute(Cpu6502 cpu)
         {
             byte fetched = cpu.ReadByte(ZeroPage(ref cpu));
+
             if (cpu.GetFlag(Status6502.Decimal))
-            {
-                ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-                cpu.A = (byte)(temp & 0x00FF);
-                SetFlags(ref cpu, fetched, temp);
-            }
+                DecimalMode(ref cpu, fetched);
             else
-            {
-                //TODO: Work on BCD Mode
-                var bcd1 = new Bcd(2, 4, true, new KaitaiStream(new[] { fetched }));
-                var bcd2 = new Bcd(2, 4, true, new KaitaiStream(new[] { cpu.A }));
+                BinaryMode(ref cpu, fetched);
 
-                var bcd3l = new Bcd(2, 4, true, new KaitaiStream(new[] { (byte)(bcd1.Digits[0] + bcd2.Digits[0]) }));
-                var bcd3h = new Bcd(2, 4, true, new KaitaiStream(new[] { (byte)(bcd1.Digits[1] + bcd2.Digits[1]) }));
-
-                byte temp = (byte)((byte)(bcd3h.AsInt << 4) | (byte)bcd3l.AsInt & 0x0F);
-                cpu.A = temp;
-                SetFlags(ref cpu, fetched, temp);
-            }
             return 3;
         }
     }
@@ -66,9 +95,10 @@ namespace Emulator._6502.Instructions
         public override byte Execute(Cpu6502 cpu)
         {
             byte fetched = cpu.ReadByte(ZeroPageX(ref cpu));
-            ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-            cpu.A = (byte)(temp & 0x00FF);
-            SetFlags(ref cpu, fetched, temp);
+            if (cpu.GetFlag(Status6502.Decimal))
+                DecimalMode(ref cpu, fetched);
+            else
+                BinaryMode(ref cpu, fetched);
             return 4;
         }
     }
@@ -81,9 +111,10 @@ namespace Emulator._6502.Instructions
         public override byte Execute(Cpu6502 cpu)
         {
             byte fetched = cpu.ReadByte(Absolute(ref cpu));
-            ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-            cpu.A = (byte)(temp & 0x00FF);
-            SetFlags(ref cpu, fetched, temp);
+            if (cpu.GetFlag(Status6502.Decimal))
+                DecimalMode(ref cpu, fetched);
+            else
+                BinaryMode(ref cpu, fetched);
             return 4;
         }
     }
@@ -97,9 +128,10 @@ namespace Emulator._6502.Instructions
         public override byte Execute(Cpu6502 cpu)
         {
             byte fetched = cpu.ReadByte(cpu.PC++);
-            ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-            cpu.A = (byte)(temp & 0x00FF);
-            SetFlags(ref cpu, fetched, temp);
+            if (cpu.GetFlag(Status6502.Decimal))
+                DecimalMode(ref cpu, fetched);
+            else
+                BinaryMode(ref cpu, fetched);
             return 2;
         }
     }
@@ -114,9 +146,10 @@ namespace Emulator._6502.Instructions
         {
             var (addr, clocks) = IndirectIndex(ref cpu);
             byte fetched = cpu.ReadByte(addr);
-            ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-            cpu.A = (byte)(temp & 0x00FF);
-            SetFlags(ref cpu, fetched, temp);
+            if (cpu.GetFlag(Status6502.Decimal))
+                DecimalMode(ref cpu, fetched);
+            else
+                BinaryMode(ref cpu, fetched);
             return (byte)(clocks + 5);
 
         }
@@ -131,9 +164,10 @@ namespace Emulator._6502.Instructions
         public override byte Execute(Cpu6502 cpu)
         {
             byte fetched = cpu.ReadByte(IndexIndirect(ref cpu));
-            ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-            cpu.A = (byte)(temp & 0x00FF);
-            SetFlags(ref cpu, fetched, temp);
+            if (cpu.GetFlag(Status6502.Decimal))
+                DecimalMode(ref cpu, fetched);
+            else
+                BinaryMode(ref cpu, fetched);
             return 6;
         }
     }
@@ -148,9 +182,10 @@ namespace Emulator._6502.Instructions
         {
             var (addr, clocks) = AbsoluteX(ref cpu);
             byte fetched = cpu.ReadByte(addr);
-            ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-            cpu.A = (byte)(temp & 0x00FF);
-            SetFlags(ref cpu, fetched, temp);
+            if (cpu.GetFlag(Status6502.Decimal))
+                DecimalMode(ref cpu, fetched);
+            else
+                BinaryMode(ref cpu, fetched);
             return (byte)(clocks + 4);
         }
     }
@@ -164,9 +199,10 @@ namespace Emulator._6502.Instructions
         {
             var (addr, clocks) = AbsoluteY(ref cpu);
             byte fetched = cpu.ReadByte(addr);
-            ushort temp = (ushort)(cpu.A + fetched + (ushort)(cpu.Status.HasFlag(Status6502.Carry) ? 1 : 0));
-            cpu.A = (byte)(temp & 0x00FF);
-            SetFlags(ref cpu, fetched, temp);
+            if (cpu.GetFlag(Status6502.Decimal))
+                DecimalMode(ref cpu, fetched);
+            else
+                BinaryMode(ref cpu, fetched);
             return (byte)(clocks + 4);
         }
     }

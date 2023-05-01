@@ -62,7 +62,7 @@ namespace Emulator._6502
 
         public void Clear()
         {
-            memory.Span.Fill(0);
+            memory.Span.Clear();
         }
 
         public byte ReadByte(ushort addr)
