@@ -1,10 +1,10 @@
-#Emulator
+# Emulator
 
 An Emulation library written in C#
 A cross-platform, multi-system emulation library written entirely in C#,
 Which will allow you to connect any compatible device to a cpu that can run it.
 
-##Goals
+## Goals
 - Add Full MOS6502 CPU(Including illegal instructions)
 - Add Support for emulated NES Hardware(PPU, cartridge,etc)
 - Add Mouse + keyboard support
