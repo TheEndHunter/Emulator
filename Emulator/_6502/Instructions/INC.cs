@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class INC : Instruction6502
+    public abstract class INC(byte bytesUsed, AddrMode6502 mode) : Instruction6502("INC", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
     {
-        protected INC(byte bytesUsed, AddrMode6502 mode) : base("INC", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, ushort data)
         {
             // The Zero flag is set if the result is 0

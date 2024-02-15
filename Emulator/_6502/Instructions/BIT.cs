@@ -1,11 +1,7 @@
 ﻿namespace Emulator._6502.Instructions
 {
-    public abstract class BIT : Instruction6502
+    public abstract class BIT(byte bytesUsed, AddrMode6502 mode) : Instruction6502("BIT", bytesUsed, mode, Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
     {
-        protected BIT(byte bytesUsed, AddrMode6502 mode) : base("BIT", bytesUsed, mode, Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
-        {
-        }
-
         protected static void SetFlags(ref Cpu6502 cpu, ushort data, byte fetch)
         {
             cpu.SetFlag(Status6502.Zero, (data & 0x00FF) == 0x00);

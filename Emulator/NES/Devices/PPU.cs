@@ -80,7 +80,7 @@ namespace Emulator.NES.Devices
         }
 
         private PPURegisters Registers;
-        private byte _latch;
+        private readonly byte _latch;
         public byte ReadByte(ushort addr)
         {
             if (addr == 0x4014)
@@ -91,10 +91,7 @@ namespace Emulator.NES.Devices
             return 0;
         }
 
-        public ushort ReadWord(ushort addr)
-        {
-            return 0;
-        }
+        public static ushort ReadWord(ushort addr) => 0x0000;
 
         public void WriteByte(ushort addr, byte data)
         {

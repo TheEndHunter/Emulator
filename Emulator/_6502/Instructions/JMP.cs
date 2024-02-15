@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class JMP : Instruction6502
+    public abstract class JMP(byte bytesUsed, AddrMode6502 mode) : Instruction6502("JMP", bytesUsed, mode, 0)
     {
-        protected JMP(byte bytesUsed, AddrMode6502 mode) : base("JMP", bytesUsed, mode, 0)
-        {
-        }
     }
 
     public sealed class JMP_Absolute : JMP

@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class ASL : Instruction6502
+    public abstract class ASL(byte bytesUsed, AddrMode6502 mode) : Instruction6502("ASL", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
     {
-        protected ASL(byte bytesUsed, AddrMode6502 mode) : base("ASL", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, ushort data)
         {
 
@@ -22,9 +19,9 @@ namespace Emulator._6502.Instructions
         }
     }
 
-    public sealed class ASL_Acumulator : ASL
+    public sealed class ASL_Accumulator : ASL
     {
-        public ASL_Acumulator() : base(1, AddrMode6502.Accumulator)
+        public ASL_Accumulator() : base(1, AddrMode6502.Accumulator)
         {
         }
 

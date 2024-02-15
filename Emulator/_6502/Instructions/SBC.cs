@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class SBC : Instruction6502
+    public abstract class SBC(byte bytesUsed, AddrMode6502 mode) : Instruction6502("SBC", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
     {
-        protected SBC(byte bytesUsed, AddrMode6502 mode) : base("SBC", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, ushort temp, ushort value)
         {
 

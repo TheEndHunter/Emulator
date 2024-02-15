@@ -6,7 +6,7 @@ namespace Emulator.Tests.Instructions
     public sealed class ADC : InstructionTests6502
     {
 
-        public (byte sum, Status6502 status) AddBinaryMode(Status6502 s, byte A, byte fetched)
+        public static (byte sum, Status6502 status) AddBinaryMode(Status6502 s, byte A, byte fetched)
         {
             ushort sum = (ushort)(A + fetched + (s.HasFlag(Status6502.Carry) ? 1 : 0));
 
@@ -14,7 +14,7 @@ namespace Emulator.Tests.Instructions
             return ((byte)sum, s);
         }
 
-        public (byte sum, Status6502 status) AddDecimalMode(Status6502 s, byte A, byte fetched)
+        public static (byte sum, Status6502 status) AddDecimalMode(Status6502 s, byte A, byte fetched)
         {
             ushort tempA = (byte)(A & 0x0F);
             ushort tempB = (byte)(fetched & 0x0F);
@@ -42,7 +42,7 @@ namespace Emulator.Tests.Instructions
             return (C, s);
         }
 
-        public Status6502 SetADCFlags(Status6502 s, byte A, byte fetched, ushort sum)
+        public static Status6502 SetADCFlags(Status6502 s, byte A, byte fetched, ushort sum)
         {
             s = SetStatus(s, Status6502.Zero, (byte)(sum & 0xFF) == 0);
 
@@ -221,9 +221,9 @@ namespace Emulator.Tests.Instructions
         [DataRow((byte)0xFA, (ushort)0xEFDA, (byte)0x88, (byte)0xFA, (byte)0x00, (ushort)0xFEED, true, DisplayName = "T3(Decimal Mode)")]
         [DataRow((byte)0xBE, (ushort)0xCDAB, (byte)0x92, (byte)0x39, (byte)0xBA, (ushort)0x0000, false, DisplayName = "T4")]
         [DataRow((byte)0xBE, (ushort)0xCDAB, (byte)0x92, (byte)0x39, (byte)0xBA, (ushort)0x0000, true, DisplayName = "T4(Decimal Mode)")]
-        public void IndexedIndirect(byte offsetAddr, ushort indaddr, byte A, byte data, byte xOffset, ushort address, bool DecimalMode)
+        public void IndexedIndirect(byte offsetAddr, ushort indirectAddress, byte A, byte data, byte xOffset, ushort address, bool DecimalMode)
         {
-            LoadIndexedIndirect(0x61, address, offsetAddr, xOffset, indaddr, data);
+            LoadIndexedIndirect(0x61, address, offsetAddr, xOffset, indirectAddress, data);
 
             Cpu.A = A;
             Cpu.Status = SetCarry(Cpu.Status, A, false);
@@ -246,9 +246,9 @@ namespace Emulator.Tests.Instructions
         [DataRow((byte)0xFA, (ushort)0xEFDA, (byte)0xEE, (byte)0xFA, (byte)0x00, (ushort)0xFEED, true, DisplayName = "T3(Decimal Mode)")]
         [DataRow((byte)0xBE, (ushort)0xCDAB, (byte)0x72, (byte)0x39, (byte)0xBA, (ushort)0x0000, false, DisplayName = "T4")]
         [DataRow((byte)0xBE, (ushort)0xCDAB, (byte)0x72, (byte)0x39, (byte)0xBA, (ushort)0x0000, true, DisplayName = "T4(Decimal Mode)")]
-        public void IndirectIndexed(byte offsetAddr, ushort indaddr, byte A, byte data, byte yOffset, ushort address, bool DecimalMode)
+        public void IndirectIndexed(byte offsetAddr, ushort indirectAddress, byte A, byte data, byte yOffset, ushort address, bool DecimalMode)
         {
-            LoadIndirectIndexed(0x71, address, offsetAddr, yOffset, indaddr, data);
+            LoadIndirectIndexed(0x71, address, offsetAddr, yOffset, indirectAddress, data);
 
             Cpu.A = A;
             Cpu.Status = SetCarry(Cpu.Status, A, false);
@@ -257,7 +257,7 @@ namespace Emulator.Tests.Instructions
             (byte sum, Status6502 status) = DecimalMode ? AddDecimalMode(Cpu.Status, A, data) : AddBinaryMode(Cpu.Status, A, data);
             var steps = Cpu.Step(1);
 
-            FinishTest(sum, Cpu.X, Cpu.Y, status, Cpu.STKP, (ushort)(address + 2), CheckPageCross(5UL, (ushort)(0x0000 + offsetAddr + yOffset), indaddr), steps);
+            FinishTest(sum, Cpu.X, Cpu.Y, status, Cpu.STKP, (ushort)(address + 2), CheckPageCross(5UL, (ushort)(0x0000 + offsetAddr + yOffset), indirectAddress), steps);
         }
     }
 }

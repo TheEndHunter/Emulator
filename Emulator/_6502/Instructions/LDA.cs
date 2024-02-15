@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class LDA : Instruction6502
+    public abstract class LDA(byte bytesUsed, AddrMode6502 mode) : Instruction6502("LDA", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
     {
-        protected LDA(byte bytesUsed, AddrMode6502 mode) : base("LDA", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, byte data)
         {
             // The Zero flag is set if the result is 0

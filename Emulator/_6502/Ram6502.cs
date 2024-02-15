@@ -1,8 +1,5 @@
-﻿using Emulator._6502.Instructions;
-
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
 using System.Diagnostics;
-using System.Net;
 using System.Text;
 
 namespace Emulator._6502

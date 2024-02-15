@@ -1,8 +1,5 @@
 ﻿using Emulator._6502;
 
-using System.Buffers.Binary;
-using System.Net.NetworkInformation;
-
 namespace Emulator.Tests.Instructions
 {
     [TestClass]
@@ -19,10 +16,6 @@ namespace Emulator.Tests.Instructions
             Ram.WriteWord(0xFFFC, resetVector);//Reset Vector Location
             Ram.WriteWord(0xFFFE, interruptVector);//Interrupt vector Location
             Ram.WriteByte(interruptVector, 0x40);//RTI instruction call
-
-
-            byte[] bytes = new byte[2];
-            BinaryPrimitives.WriteUInt16LittleEndian(bytes, (ushort)(resetVector + 1));
 
             Cpu.Reset();
 

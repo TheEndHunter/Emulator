@@ -2,37 +2,26 @@
 
 using System.Buffers.Binary;
 using System.Diagnostics;
-using System.Net;
-using System.Reflection.Emit;
 using System.Text;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Emulator._6502.Instructions
 {
     /// <summary>
     /// 6502 instruction
     /// </summary>
+    /// <remarks>
+    /// Default Constructor
+    /// </remarks>
+    /// <param name="name"></param>
+    /// <param name="addressMode"></param>
+    /// <param name="flags"></param>
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-    public abstract class Instruction6502
+    public abstract class Instruction6502(string name, byte bytesUsed, AddrMode6502 addressMode, Status6502 flags)
     {
-        /// <summary>
-        /// Default Constructor
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="addressMode"></param>
-        /// <param name="flags"></param>
-        protected Instruction6502(string name, byte bytesUsed, AddrMode6502 addressMode, Status6502 flags)
-        {
-            Name = name;
-            AddressMode = addressMode;
-            Flags = flags;
-            BytesUsed = bytesUsed;
-        }
-        public string Name { get; }
-        public AddrMode6502 AddressMode { get; }
-        public Status6502 Flags { get; }
-        public byte BytesUsed { get; }
+        public string Name { get; } = name;
+        public AddrMode6502 AddressMode { get; } = addressMode;
+        public Status6502 Flags { get; } = flags;
+        public byte BytesUsed { get; } = bytesUsed;
         public abstract byte Execute(Cpu6502 cpu);
         public string GetDebuggerDisplay()
         {
@@ -96,11 +85,11 @@ namespace Emulator._6502.Instructions
 
             if (BitConverter.IsLittleEndian)
             {
-                return BinaryPrimitives.ReadUInt16LittleEndian(new[] { lo, hi });
+                return BinaryPrimitives.ReadUInt16LittleEndian([lo, hi]);
             }
             else
             {
-                return BinaryPrimitives.ReadUInt16BigEndian(new[] { lo, hi });
+                return BinaryPrimitives.ReadUInt16BigEndian([lo, hi]);
             }
         }
         protected static ushort ZeroPageX(ref Cpu6502 cpu)
@@ -108,11 +97,11 @@ namespace Emulator._6502.Instructions
             byte lo = (byte)(cpu.ReadByte(cpu.PC++) + cpu.X);
             if (BitConverter.IsLittleEndian)
             {
-                return BinaryPrimitives.ReadUInt16LittleEndian(new[] { lo, hi });
+                return BinaryPrimitives.ReadUInt16LittleEndian([lo, hi]);
             }
             else
             {
-                return BinaryPrimitives.ReadUInt16BigEndian(new[] { lo, hi });
+                return BinaryPrimitives.ReadUInt16BigEndian([lo, hi]);
             }
         }
         protected static ushort ZeroPageY(ref Cpu6502 cpu)
@@ -121,11 +110,11 @@ namespace Emulator._6502.Instructions
             byte lo = (byte)(cpu.ReadByte(cpu.PC++) + cpu.Y);
             if (BitConverter.IsLittleEndian)
             {
-                return BinaryPrimitives.ReadUInt16LittleEndian(new[] { lo, hi });
+                return BinaryPrimitives.ReadUInt16LittleEndian([lo, hi]);
             }
             else
             {
-                return BinaryPrimitives.ReadUInt16BigEndian(new[] { lo, hi });
+                return BinaryPrimitives.ReadUInt16BigEndian([lo, hi]);
             }
         }
         protected static ushort Absolute(ref Cpu6502 cpu)

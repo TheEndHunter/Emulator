@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class CPX : Instruction6502
+    public abstract class CPX(byte bytesUsed, AddrMode6502 mode) : Instruction6502("CPX", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
     {
-        protected CPX(byte bytesUsed, AddrMode6502 mode) : base("CPX", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, byte fetched)
         {
             var temp = cpu.X - fetched;

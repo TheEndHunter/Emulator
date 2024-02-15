@@ -1,15 +1,7 @@
-﻿
-
-using Kaitai;
-
-namespace Emulator._6502.Instructions
+﻿namespace Emulator._6502.Instructions
 {
-    public abstract class ADC : Instruction6502
+    public abstract class ADC(byte bytesUsed, AddrMode6502 mode) : Instruction6502("ADC", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
     {
-        protected ADC(byte bytesUsed, AddrMode6502 mode) : base("ADC", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.OverFlow | Status6502.Negative)
-        {
-        }
-
         protected static void SetFlags(ref Cpu6502 cpu, byte fetched, ushort sum)
         {
             cpu.SetFlag(Status6502.Zero, (byte)(sum & 0xFF) == 0);
@@ -29,7 +21,7 @@ namespace Emulator._6502.Instructions
             {
                 cpu.SetFlag(Status6502.Carry, sum > 0xFF);
                 cpu.SetFlag(Status6502.Negative, (sum & 0x80) != 0);
-                cpu.SetFlag(Status6502.OverFlow, (((cpu.A ^ fetched) ^ (cpu.A ^ sum)) & 0x80) != 0);
+                cpu.SetFlag(Status6502.OverFlow, ((cpu.A ^ fetched ^ (cpu.A ^ sum)) & 0x80) != 0);
             }
         }
 

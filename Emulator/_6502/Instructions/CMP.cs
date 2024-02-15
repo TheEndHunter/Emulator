@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class CMP : Instruction6502
+    public abstract class CMP(byte bytesUsed, AddrMode6502 mode) : Instruction6502("CMP", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
     {
-        protected CMP(byte bytesUsed, AddrMode6502 mode) : base("CMP", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, byte fetched)
         {
             var temp = cpu.A - fetched;

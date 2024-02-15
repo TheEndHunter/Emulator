@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Emulator.App": {
+      "commandName": "Project",
+      "commandLineArgs": "-s .\\Roms\\AddressingModeTest.bin -d"
+    }
+  }
+}

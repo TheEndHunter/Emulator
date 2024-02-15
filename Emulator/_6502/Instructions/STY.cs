@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class STY : Instruction6502
+    public abstract class STY(byte bytesUsed, AddrMode6502 mode) : Instruction6502("STY", bytesUsed, mode, 0)
     {
-        protected STY(byte bytesUsed, AddrMode6502 mode) : base("STY", bytesUsed, mode, 0)
-        {
-        }
     }
 
     public sealed class STY_ZeroPage : STY

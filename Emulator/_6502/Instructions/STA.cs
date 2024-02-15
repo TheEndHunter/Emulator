@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class STA : Instruction6502
+    public abstract class STA(byte bytesUsed, AddrMode6502 mode) : Instruction6502("STA", bytesUsed, mode, 0)
     {
-        protected STA(byte bytesUsed, AddrMode6502 mode) : base("STA", bytesUsed, mode, 0)
-        {
-        }
     }
 
     public sealed class STA_IndexedIndirect : STA

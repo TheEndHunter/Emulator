@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class ORA : Instruction6502
+    public abstract class ORA(byte bytesUsed, AddrMode6502 mode) : Instruction6502("ORA", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
     {
-        protected ORA(byte bytesUsed, AddrMode6502 mode) : base("ORA", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, byte data)
         {
             // The Zero flag is set if the result is 0
@@ -65,7 +62,7 @@ namespace Emulator._6502.Instructions
         public override byte Execute(Cpu6502 cpu)
         {
             cpu.A |= cpu.ReadByte(Absolute(ref cpu));
-        cpu: SetFlags(ref cpu, cpu.A);
+            SetFlags(ref cpu, cpu.A);
             return 4;
         }
     }

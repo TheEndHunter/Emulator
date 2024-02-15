@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class AND : Instruction6502
+    public abstract class AND(byte bytesUsed, AddrMode6502 mode) : Instruction6502("AND", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
     {
-        protected AND(byte bytesUsed, AddrMode6502 mode) : base("AND", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, byte data)
         {
             // The Zero flag is set if the result is 0

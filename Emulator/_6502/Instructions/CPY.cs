@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class CPY : Instruction6502
+    public abstract class CPY(byte bytesUsed, AddrMode6502 mode) : Instruction6502("CPY", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
     {
-        protected CPY(byte bytesUsed, AddrMode6502 mode) : base("CPY", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, byte fetched)
         {
             var temp = cpu.Y - fetched;

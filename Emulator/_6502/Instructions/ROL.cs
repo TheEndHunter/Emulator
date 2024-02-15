@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class ROL : Instruction6502
+    public abstract class ROL(byte bytesUsed, AddrMode6502 mode) : Instruction6502("ROL", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
     {
-        protected ROL(byte bytesUsed, AddrMode6502 mode) : base("ROL", bytesUsed, mode, Status6502.Carry | Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, ushort fetched)
         {
             // The carry flag out exists in the high byte bit 0

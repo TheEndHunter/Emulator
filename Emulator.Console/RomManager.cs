@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Text;
 
 namespace Emulator.App
 {
@@ -119,7 +115,7 @@ namespace Emulator.App
         private readonly string _romDir;
         private readonly DirectoryWatcher _watcher;
         private object _lock;
-        private List<(string Name, string FullPath)> _fileList;
+        private List<Tuple<string, string>> _fileList;
         private int _exitIndex;
         private string _fileMenu;
         public int FileCount
@@ -169,6 +165,10 @@ namespace Emulator.App
             _watcher = new(_romDir);
             _watcher.FileChanged += OnChange;
 
+            _fileList = [];
+            _exitIndex = 0;
+            _fileMenu = string.Empty;
+
             DisassemblyDir = Path.GetFullPath(Path.Combine(_romDir, "Disassembly"));
 
             RequiresUpdate = true;
@@ -192,7 +192,7 @@ namespace Emulator.App
             }
         }
 
-        public (string Name, string FullPath)? GetFileByIndex(int index)
+        public Tuple<string, string>? GetFileByIndex(int index)
         {
             try
             {
@@ -215,7 +215,7 @@ namespace Emulator.App
             {
                 Monitor.Enter(_lock);
                 Monitor.Wait(_lock, 10);
-                List<(string Name, string FullPath)> list = new();
+                List<Tuple<string, string>> list = [];
                 StringBuilder sb = new();
                 int fileIndex = 0;
                 foreach (var file in Directory.EnumerateFiles(_romDir))

@@ -1,48 +1,90 @@
-﻿using Emulator._6502;
+﻿using CommandLine;
 
-using Microsoft.Win32.SafeHandles;
-
-using System.ComponentModel.Design;
+using Emulator._6502;
 
 namespace Emulator.App
 {
     /// <summary>
-    /// The program.
+    /// The prog_ram.
     /// </summary>
     internal static class Program
     {
-        public static async Task<int> Main()
+        private static readonly Cpu6502 _cpu = new();
+        private static readonly Ram6502 _ram = new();
+        private static readonly RomManager _folderMon = new();
+        public struct CommandOptions
         {
-            Cpu6502 cpu = new();
+            [Option('s', "Source", Default = "", FlagCounter = false, HelpText = "File path to source bin", Hidden = false, Required = false)]
+            public FileInfo File { get; set; }
+            [Option('d', "Disassemble", Default = true, FlagCounter = false, HelpText = "save disassembly to same directory as source", Hidden = false, Required = false)]
+            public bool Disassemble { get; set; }
+        }
 
-            Ram6502 ram = new();
+        public static int Main(string[] args)
+        {
+            _cpu.RegisterDevice(_ram);
+            var res = Parser.Default.ParseArguments<CommandOptions>(args).MapResult(ParsedCommand, UnParsedCommand);
+            Console.ResetColor();
+            Console.Clear();
+            return res;
+        }
 
-            cpu.RegisterDevice(ram);
+        private static int ParsedCommand(CommandOptions a)
+        {
+            if (a.File?.Exists != true)
+            {
+                return UnParsedCommand(null);
+            }
 
-            var folderMonitor = new RomManager();
+            _ram.Clear();
+            ushort bytes = _ram.LoadData(a.File.FullName);
+            _cpu.Reset();
+            var dis = _cpu.DecompileAddrRange(0, bytes);
+            _cpu.Reset();
+            _cpu.Step((ushort)dis.Length);
 
+            Console.WriteLine();
+            if (!Directory.Exists(_folderMon.DisassemblyDir))
+            {
+                Directory.CreateDirectory(_folderMon.DisassemblyDir);
+            }
+
+            if (a.Disassemble)
+            {
+                var path = $"{_folderMon.DisassemblyDir}\\{a.File.Name}_Disassembly.txt";
+
+                if (!Path.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                TextWriter text = new StreamWriter(path);
+                for(int i = 0; i < dis.Length; i++)
+                {
+                    text.WriteLineAsync(dis[i]);
+                }
+                text.Close();
+            }
+            return 0;
+        }
+
+        private static int UnParsedCommand(IEnumerable<Error>? errors = null)
+        {
             bool exit = false;
             do
             {
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.ForegroundColor = ConsoleColor.White;
-
-                Console.Clear();
-                Console.WriteLine("Please Select a Rom Image to run:");
-                Console.Write(folderMonitor.GetMenu());
-                Console.Write($"Enter Value from 0 to {folderMonitor.ExitIndex}: ");
                 int result;
-
                 do
                 {
                     Console.Clear();
                     Console.WriteLine("Please Select a Rom Image to run:");
-                    Console.Write(folderMonitor.GetMenu());
-                    Console.Write($"Enter Value from 0 to {folderMonitor.ExitIndex}: ");
+                    Console.Write(_folderMon.GetMenu());
+                    Console.Write($"Enter Value from 0 to {_folderMon.ExitIndex}: ");
 
                     if (int.TryParse(Console.ReadLine() ?? "-1", out result))
                     {
-                        if (result < 0 || result > folderMonitor.ExitIndex)
+                        if (result < 0 || result > _folderMon.ExitIndex)
                         {
                             continue;
                         }
@@ -52,36 +94,44 @@ namespace Emulator.App
                 while (true);
 
                 Console.Clear();
-                if (result == folderMonitor.ExitIndex)
+                if (result == _folderMon.ExitIndex)
                 {
                     exit = true;
                     continue;
                 }
-
-                (string Name, string FullPath) = folderMonitor.GetFileByIndex(result) ?? throw new ArgumentException(nameof(result), "Index not valid file");
+                var s = _folderMon.GetFileByIndex(result);
+                ArgumentNullException.ThrowIfNull(s, nameof(result));
+                (string Name, string FullPath) = s;
 
                 Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Clear();
 
-                ushort bytes = ram.LoadData(FullPath);
-                cpu.Reset();
+                _ram.Clear();
+                ushort bytes = _ram.LoadData(FullPath);
+                _cpu.Reset();
                 Console.WriteLine("Number of bytes read:{0}", bytes);
-                var dis = cpu.DecompileAddrRange(0, bytes);
-                foreach (var i in dis)
+                var dis = _cpu.DecompileAddrRange(0, bytes);
+                int c = dis.Length;
+                for (int i = 0; i < c; i++)
                 {
-                    Console.Write("{0}{1}", i, Environment.NewLine);
+                    Console.WriteLine(dis[i]);
                 }
-                cpu.Reset();
-                Console.WriteLine(cpu.GetDebuggerDisplay());
-                cpu.Step((ushort)dis.Count);
+                _cpu.Reset();
+                Console.WriteLine(_cpu.GetDebuggerDisplay());
 
-                Console.WriteLine(string.Empty);
+                _cpu.Step((ushort)dis.Length);
+
+                Console.WriteLine();
                 Console.Write("Would you like to save the disassembly?(y/n): ");
 
                 var (Left, Top) = Console.GetCursorPosition();
 
                 ConsoleKeyInfo keyinfo;
+                if (!Directory.Exists(_folderMon.DisassemblyDir))
+                {
+                    Directory.CreateDirectory(_folderMon.DisassemblyDir);
+                }
                 do
                 {
                     keyinfo = Console.ReadKey();
@@ -92,22 +142,18 @@ namespace Emulator.App
                     }
                     else if (keyinfo.Key == ConsoleKey.Y)
                     {
-                        var path = Path.Combine(folderMonitor.DisassemblyDir, Name + ".txt");
-                        if (!Directory.Exists(folderMonitor.DisassemblyDir))
-                        {
-                            Directory.CreateDirectory(folderMonitor.DisassemblyDir);
-                        }
+                        var path = $"{_folderMon.DisassemblyDir}\\{Name}.txt";
 
                         if (!Path.Exists(path))
                         {
-                            File.AppendAllLines(path, dis);
-                            break;
+                            File.Delete(path);
                         }
-                        else
+                        TextWriter text = new StreamWriter(path);
+                        for (int i = 0; i < dis.Length; i++)
                         {
-                            File.WriteAllLines(path, dis);
-                            break;
+                            text.WriteLineAsync(dis[i]);
                         }
+                        text.Close();
                     }
                     else
                     {
@@ -116,17 +162,12 @@ namespace Emulator.App
                 }
                 while (true);
 
-                Console.WriteLine(cpu.GetDebuggerDisplay());
+                Console.WriteLine(_cpu.GetDebuggerDisplay());
                 Console.Clear();
 
             }
             while (!exit);
-
-            Console.ResetColor();
-            Console.Clear();
-
             return 0;
-
         }
     }
 }

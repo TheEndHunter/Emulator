@@ -9,42 +9,28 @@ namespace Emulator.Tests.Instructions
         protected Cpu6502 Cpu { get; private set; }
         protected Ram6502 Ram { get; private set; }
 
-        public Status6502 SetNegative(Status6502 current, byte data)
-        {
-            return SetStatus(current, Status6502.Negative, (data & 0x80) > 0);
-        }
+        public static Status6502 SetNegative(Status6502 current, byte data)
+        => SetStatus(current, Status6502.Negative, (data & 0x80) > 0);
 
-        public Status6502 SetCarry(Status6502 current, byte data, bool borrow)
-        {
-            return SetStatus(current, Status6502.Carry, borrow ? (data & 0x01) == 0x01 : (data & 0x80) > 0);
-        }
+        public static Status6502 SetCarry(Status6502 current, byte data, bool borrow)
+        => SetStatus(current, Status6502.Carry, borrow ? (data & 0x01) == 0x01 : (data & 0x80) > 0);
 
-        public Status6502 SetDecimal(Status6502 current, bool set)
-        {
-            return SetStatus(current, Status6502.Decimal, set);
-        }
+        public static Status6502 SetDecimal(Status6502 current, bool set)
+        => SetStatus(current, Status6502.Decimal, set);
 
-        public Status6502 SetOverflow(Status6502 current, byte last, byte curdata)
-        {
-            return SetStatus(current, Status6502.OverFlow, (byte)(last & 0x80) != (byte)(curdata & 0x80));
-        }
+        public static Status6502 SetOverflow(Status6502 current, byte last, byte currentData)
+        => SetStatus(current, Status6502.OverFlow, (byte)(last & 0x80) != (byte)(currentData & 0x80));
 
-        public Status6502 SetZero(Status6502 current, byte data)
-        {
-            return SetStatus(current, Status6502.Zero, data == 0);
-        }
+        public static Status6502 SetZero(Status6502 current, byte data)
+        => SetStatus(current, Status6502.Zero, data == 0);
 
-        public Status6502 SetBreak(Status6502 current, bool set)
-        {
-            return SetStatus(current, Status6502.Break, set);
-        }
+        public static Status6502 SetBreak(Status6502 current, bool set)
+        => SetStatus(current, Status6502.Break, set);
 
-        public Status6502 SetDisableInterrupt(Status6502 current, bool set)
-        {
-            return SetStatus(current, Status6502.InterruptDisable, set);
-        }
+        public static Status6502 SetDisableInterrupt(Status6502 current, bool set)
+        => SetStatus(current, Status6502.InterruptDisable, set);
 
-        public Status6502 SetStatus(Status6502 current, Status6502 flag, bool condition)
+        public static Status6502 SetStatus(Status6502 current, Status6502 flag, bool condition)
         {
             Status6502 status = current;
             if (condition)
@@ -72,10 +58,7 @@ namespace Emulator.Tests.Instructions
             Assert.AreEqual(PC, Cpu.PC, "PC is not equal");
         }
 
-        private void CheckCycles(ulong cycles, ulong current)
-        {
-            Assert.AreEqual(cycles, current, "Cycles are not equal");
-        }
+        private static void CheckCycles(ulong cycles, ulong current) => Assert.AreEqual(cycles, current, "Cycles are not equal");
 
         public void FinishTest(byte A, byte X, byte Y, Status6502 status, byte STKP, ushort PC, ulong cycles, ulong currentCycles)
         {
@@ -249,7 +232,7 @@ namespace Emulator.Tests.Instructions
         }
 
 
-        public ulong CheckPageCross(ulong cycles, ushort startAddr, ushort endAddr)
+        public static ulong CheckPageCross(ulong cycles, ushort startAddr, ushort endAddr)
         {
             byte hiStart;
             byte hiEnd;

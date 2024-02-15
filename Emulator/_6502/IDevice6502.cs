@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
-namespace Emulator._6502
+﻿namespace Emulator._6502
 {
     [Flags]
     public enum DeviceConfig

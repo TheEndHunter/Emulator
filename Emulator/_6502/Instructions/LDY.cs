@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class LDY : Instruction6502
+    public abstract class LDY(byte bytesUsed, AddrMode6502 mode) : Instruction6502("LDY", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
     {
-        protected LDY(byte bytesUsed, AddrMode6502 mode) : base("LDY", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, byte data)
         {
             // The Zero flag is set if the result is 0

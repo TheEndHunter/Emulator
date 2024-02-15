@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class DEC : Instruction6502
+    public abstract class DEC(byte bytesUsed, AddrMode6502 mode) : Instruction6502("DEC", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
     {
-        protected DEC(byte bytesUsed, AddrMode6502 mode) : base("DEC", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
-        {
-        }
         protected static void SetFlags(ref Cpu6502 cpu, ushort data)
         {
             // The Zero flag is set if the result is 0

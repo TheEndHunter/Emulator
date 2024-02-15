@@ -2,11 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class STX : Instruction6502
+    public abstract class STX(byte bytesUsed, AddrMode6502 mode) : Instruction6502("STX", bytesUsed, mode, 0)
     {
-        protected STX(byte bytesUsed, AddrMode6502 mode) : base("STX", bytesUsed, mode, 0)
-        {
-        }
     }
 
     public sealed class STX_ZeroPage : STX

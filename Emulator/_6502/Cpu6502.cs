@@ -1,8 +1,8 @@
-﻿using System.Buffers.Binary;
+﻿using Emulator._6502.Instructions;
+
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Xml.Linq;
 
 namespace Emulator._6502
 {
@@ -28,9 +28,12 @@ namespace Emulator._6502
             else
                 Status &= ~f;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public bool GetFlag(Status6502 f) => (Status & f) != 0;
 
-        private readonly InstructionSet6502 m_Instructions;
+        private readonly UnknownInstruction _unknownInstruction;
+        private readonly InstructionSetMOS6502 _instructions;
 
         public event OnCPUReadByte OnCPUReadByte;
         public event OnCPUWriteByte OnCPUWriteByte;
@@ -48,8 +51,8 @@ namespace Emulator._6502
             if (s != null)
             {
                 var sadd = s.Value.address;
-#if DEBUG
                 var sdev = s.Value.dev;
+#if DEBUG
                 throw new InvalidOperationException($"device: {instance.DebugName} overlaps with device: {sdev} at address 0x{sadd:X}");
 #else
                 throw new InvalidOperationException($"a device attempted to register a handler that is overlapping with another device at address 0x{sadd:X}");
@@ -139,17 +142,12 @@ namespace Emulator._6502
         /// <returns></returns>
         public ushort PopWord()
         {
-            byte _0 = OnCPUReadByte((ushort)(0x0100 | ++STKP));
-            byte _1 = OnCPUReadByte((ushort)(0x0100 | ++STKP));
-
-            if (BitConverter.IsLittleEndian)
+            Span<byte> bytes = [OnCPUReadByte((ushort)(0x0100 | ++STKP)), OnCPUReadByte((ushort)(0x0100 | ++STKP))];
+            if (!BitConverter.IsLittleEndian)
             {
-                return BitConverter.ToUInt16(new byte[] { _0, _1 });
+                bytes.Reverse();
             }
-            else
-            {
-                return BitConverter.ToUInt16(new byte[] { _1, _0 });
-            }
+            return BitConverter.ToUInt16(bytes);
         }
         /// <summary>
         /// Push a word to the Stack
@@ -157,17 +155,15 @@ namespace Emulator._6502
         /// <param name="data"></param>
         public void PushWord(ushort data)
         {
-            byte[] b = BitConverter.GetBytes(data);
-            if (BitConverter.IsLittleEndian)
+            Span<byte> bytes = BitConverter.GetBytes(data);
+
+            if (!BitConverter.IsLittleEndian)
             {
-                OnCPUWriteByte((ushort)(0x0100 | STKP--), b[1]);
-                OnCPUWriteByte((ushort)(0x0100 | STKP--), b[0]);
+                bytes.Reverse();
             }
-            else
-            {
-                OnCPUWriteByte((ushort)(0x0100 | STKP--), b[0]);
-                OnCPUWriteByte((ushort)(0x0100 | STKP--), b[1]);
-            }
+
+            OnCPUWriteByte((ushort)(0x0100 | STKP--), bytes[0]);
+            OnCPUWriteByte((ushort)(0x0100 | STKP--), bytes[1]);
         }
 
         public void PopStatus()
@@ -190,42 +186,33 @@ namespace Emulator._6502
             PushWord(PC);
         }
 
-
         public ushort ReadWord(ushort address)
         {
-            byte lo = OnCPUReadByte(address);
-            byte hi = OnCPUReadByte((ushort)(address + 1));
-
-            if (BitConverter.IsLittleEndian)
+            Span<byte> bytes = [OnCPUReadByte(address), OnCPUReadByte((ushort)(address + 1))];
+            if (!BitConverter.IsLittleEndian)
             {
-                return BitConverter.ToUInt16(new byte[] { lo, hi }, 0);
+                bytes.Reverse();
             }
-            else
-            {
-                return BitConverter.ToUInt16(new byte[] { hi, lo }, 0);
-            }
-
+            return BitConverter.ToUInt16(bytes);
         }
 
         public void WriteWord(ushort address, ushort data)
         {
-            byte[] b = BitConverter.GetBytes(data);
-            if (BitConverter.IsLittleEndian)
+            Span<byte> bytes = BitConverter.GetBytes(data);
+            if (!BitConverter.IsLittleEndian)
             {
-                OnCPUWriteByte(address, b[0]);
-                OnCPUWriteByte((ushort)(address + 1), b[1]);
+                bytes.Reverse();
             }
-            else
-            {
-                OnCPUWriteByte(address, b[1]);
-                OnCPUWriteByte((ushort)(address + 1), b[0]);
-            }
+
+            OnCPUWriteByte(address, bytes[0]);
+            OnCPUWriteByte((ushort)(address + 1), bytes[1]);
         }
 
         public Cpu6502()
         {
-            m_Instructions = new InstructionSet6502();
-            Devices = new List<IDevice6502>();
+            _unknownInstruction = new UnknownInstruction();
+            _instructions = new InstructionSetMOS6502();
+            Devices = [];
 
             A = 0;
             X = 0;
@@ -260,40 +247,82 @@ namespace Emulator._6502
 
             while (!(token?.IsCancellationRequested ?? false))
             {
-                var inst = m_Instructions[ReadByte(PC++)];
-                ulong cycles = inst.Execute(this);
+                byte opcode = ReadByte(PC++);
+                var inst = _instructions[opcode];
 
-                if (inst.Name == "BRK" && tokenNull)
+                if (inst != null)
                 {
-                    if (PC == ReadWord(0xFFFE))
+                    ulong cycles = inst.Execute(this);
+
+                    if (inst!.Name == "BRK" && tokenNull)
                     {
-                        break;
+                        if (PC == ReadWord(0xFFFE))
+                        {
+                            break;
+                        }
                     }
-                }
 
-                if ((_interrupted && !Status.HasFlag(Status6502.InterruptDisable) || _NonMaskableInterrupt) && !_interruptHandler)
+                    if ((_interrupted && !Status.HasFlag(Status6502.InterruptDisable) || _NonMaskableInterrupt) && !_interruptHandler)
+                    {
+                        _interruptHandler = true;
+                        cycles += 7;
+                        PushPC();
+                        PushStatus();
+                        SetFlag(Status6502.InterruptDisable, true);
+                        PC = ReadWord(_NonMaskableInterrupt ? (ushort)0xFFFA : (ushort)0xFFFE);
+                    }
+                    totalCycles += cycles;
+                }
+                else
                 {
-                    _interruptHandler = true;
-                    cycles += 7;
-                    PushPC();
-                    PushStatus();
-                    SetFlag(Status6502.InterruptDisable, true);
-                    PC = ReadWord(_NonMaskableInterrupt ? (ushort)0xFFFA : (ushort)0xFFFE);
+                    _unknownInstruction.Execute(this);
+                    return ValueTask.FromException<ulong>(new InvalidOperationException($"This Instruction({opcode}) is Not Implemented!"));
                 }
-
-                totalCycles += cycles;
             }
-
             return ValueTask.FromResult(totalCycles);
         }
 
+        private ulong _cycles = 0;
+        public void Tick(double delta)
+        {
+            if (_cycles > 0)
+            {
+                _cycles--;
+                return;
+            }
+
+            if ((_interrupted && !Status.HasFlag(Status6502.InterruptDisable) || _NonMaskableInterrupt) && !_interruptHandler)
+            {
+                _interruptHandler = true;
+                _cycles += 7;
+                PushPC();
+                PushStatus();
+                SetFlag(Status6502.InterruptDisable, true);
+                PC = ReadWord(_NonMaskableInterrupt ? (ushort)0xFFFA : (ushort)0xFFFE);
+            }
+            else
+            {
+                var b = ReadByte(PC++);
+                var i = _instructions[b] ?? throw new InvalidOperationException($"This Instruction({b}) is Not Implemented!");
+                _cycles += i.Execute(this);
+            }
+        }
+
+        /// <summary>
+        /// Check if a device overlaps with another device
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
         private (IDevice6502 dev, ushort address)? CheckDeviceOverlap(IDevice6502 n)
         {
             for (ushort addr = 0; addr < ushort.MaxValue; addr++)
             {
                 var s = n.CheckDeviceInRange(addr, n.DeviceFlags);
-                foreach (var device in Devices)
+                int devCount = Devices.Count;
+                for(int i = 0; i < devCount; i++)
                 {
+                    var device = Devices[i];
+
                     if (s && device.CheckDeviceInRange(addr, n.DeviceFlags))
                     {
                         return (device, addr);
@@ -315,18 +344,20 @@ namespace Emulator._6502
 
             for (ushort instruct = 0; instruct < steps; instruct++)
             {
-                var b = ReadByte(PC++);
-                cycles += m_Instructions[b].Execute(this);
-
                 if ((_interrupted && !Status.HasFlag(Status6502.InterruptDisable) || _NonMaskableInterrupt) && !_interruptHandler)
                 {
                     _interruptHandler = true;
-                    cycles += 7;
+                    _cycles += 7;
                     PushPC();
                     PushStatus();
                     SetFlag(Status6502.InterruptDisable, true);
                     PC = ReadWord(_NonMaskableInterrupt ? (ushort)0xFFFA : (ushort)0xFFFE);
-                    instruct++;
+                }
+                else
+                {
+                    var b = ReadByte(PC++);
+                    var i = _instructions[b] ?? throw new InvalidOperationException($"This Instruction({b}) is Not Implemented!");
+                    cycles += i.Execute(this);
                 }
                 totalCycles += cycles;
 
@@ -338,35 +369,53 @@ namespace Emulator._6502
             return totalCycles;
         }
 
-        public List<string> DecompileOpcodes(ushort startAddress, ushort opCount, bool showFlags = false)
+        public ReadOnlySpan<string> DecompileOpcodes(ushort startAddress, ushort opCount, bool showFlags = false)
         {
             if (startAddress + opCount >= ushort.MaxValue)
             {
                 throw new ArgumentOutOfRangeException(nameof(opCount), "Arguments will go out of range");
             }
 
-            List<string> disassembly = new();
+            Span<string> span = new string[(opCount)];
+            var sb = new StringBuilder();
             for (ushort ops = 0, address = startAddress; ops < opCount; ops++)
             {
-                var sb = new StringBuilder();
-                m_Instructions[ReadByte(address)].Disassemble(sb, this, ref address, showFlags);
-                disassembly.Add(sb.ToString());
+                sb.Clear();
+                var i = _instructions[ReadByte(address)];
+                if (i is null)
+                {
+                    _unknownInstruction.Disassemble(sb, this, ref address, showFlags);
+                }
+                else
+                { 
+                    i.Disassemble(sb, this, ref address, showFlags);
+                }
+                span[ops] = sb.ToString();
             }
 
-            return disassembly;
+            return span;
         }
 
-        public List<string> DecompileAddrRange(ushort startAddress, ushort endAddress = ushort.MaxValue, bool showFlags = false)
+        public ReadOnlySpan<string> DecompileAddrRange(ushort startAddress, ushort endAddress = ushort.MaxValue, bool showFlags = false)
         {
-            List<string> disassembly = new();
+            Span<string> span = new string[(endAddress-startAddress)];
 
+            var sb = new StringBuilder();
             for (var address = startAddress; address < endAddress;)
             {
-                var sb = new StringBuilder();
-                m_Instructions[ReadByte(address)].Disassemble(sb, this, ref address, showFlags);
-                disassembly.Add(sb.ToString());
+                sb.Clear();
+                var i = _instructions[ReadByte(address)];
+                if (i is null)
+                {
+                    _unknownInstruction.Disassemble(sb, this, ref address, showFlags);
+                }
+                else
+                {
+                    i.Disassemble(sb, this, ref address, showFlags);
+                }
+                span[address] = sb.ToString();
             }
-            return disassembly;
+            return span;
         }
 
         public void SetIRQ()

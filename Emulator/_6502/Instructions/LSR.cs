@@ -2,13 +2,8 @@
 
 namespace Emulator._6502.Instructions
 {
-    public abstract class LSR : Instruction6502
+    public abstract class LSR(byte bytesUsed, AddrMode6502 mode) : Instruction6502("LSR", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
     {
-        protected LSR(byte bytesUsed, AddrMode6502 mode) : base("LSR", bytesUsed, mode, Status6502.Zero | Status6502.Negative)
-        {
-        }
-
-
         protected static void SetCarry(ref Cpu6502 cpu, byte data)
         {
             // The Carry flag is set to the value of the lowest data bit(bit 0)
