@@ -4,7 +4,7 @@ namespace Emulator.App
 {
 
     public delegate void DirectoryFileChanged();
-    internal class DirectoryWatcher : IDisposable
+    internal sealed class DirectoryWatcher : IDisposable
     {
         public DirectoryWatcher(string path)
         {
@@ -67,7 +67,7 @@ namespace Emulator.App
         public event DirectoryFileChanged? FileChanged;
 
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
@@ -110,7 +110,7 @@ namespace Emulator.App
         }
     }
 
-    internal class RomManager
+    internal sealed class RomManager : IDisposable
     {
         private readonly string _romDir;
         private readonly DirectoryWatcher _watcher;
@@ -249,6 +249,11 @@ namespace Emulator.App
             _fileList.Clear();
             _lock = null;
             _fileMenu = string.Empty;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

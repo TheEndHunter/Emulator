@@ -8,14 +8,12 @@
 
         public override byte Execute(Cpu6502 cpu)
         {
-            var addr = Relative(ref cpu);
-            var jaddr = cpu.ReadWord(addr);
             byte clocks = 2;
             if (!cpu.GetFlag(Status6502.Carry))
             {
                 clocks++;
-                cpu.PC = jaddr;
-                if ((addr & 0xFF00) != (jaddr & 0xFF00))
+                cpu.PC = cpu.ReadWord(Relative(ref cpu));
+                if ((Relative(ref cpu) & 0xFF00) != (cpu.ReadWord(Relative(ref cpu)) & 0xFF00))
                 {
                     clocks++;
                 }

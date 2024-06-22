@@ -182,22 +182,19 @@ namespace Emulator._6502.Instructions
 
         public static ushort Indirect(ref Cpu6502 cpu)
         {
-            ushort addr = cpu.ReadWord(cpu.PC);
             cpu.PC += 2;
 
-            byte loAddr = BitConverter.IsLittleEndian ? (byte)(addr & 0xFF) : (byte)(addr >> 8);
-            byte hiAddr = BitConverter.IsLittleEndian ? (byte)(addr >> 8) : (byte)(addr & 0xFF);
 
-            byte[] bytes = new byte[2];
-            if (loAddr == 0xFF)
+            if ((BitConverter.IsLittleEndian ? (byte)(cpu.ReadWord(cpu.PC) & 0xFF) : (byte)(cpu.ReadWord(cpu.PC) >> 8)) == 0xFF)
             {
-                bytes[0] = cpu.ReadByte(addr);
-                bytes[1] = cpu.ReadByte((ushort)(hiAddr << 8));
-                return BinaryPrimitives.ReadUInt16LittleEndian(bytes);
+                var b = new byte[2];
+                b[0] = cpu.ReadByte(cpu.ReadWord(cpu.PC));
+                b[1] = cpu.ReadByte((ushort)((BitConverter.IsLittleEndian ? (byte)(cpu.ReadWord(cpu.PC) >> 8) : (byte)(cpu.ReadWord(cpu.PC) & 0xFF)) << 8));
+                return BinaryPrimitives.ReadUInt16LittleEndian(new byte[2]);
             }
             else
             {
-                return cpu.ReadWord(addr);
+                return cpu.ReadWord(cpu.ReadWord(cpu.PC));
             }
         }
 
@@ -208,12 +205,11 @@ namespace Emulator._6502.Instructions
         /// <returns></returns>
         public static (ushort addr, byte clocks) IndirectIndex(ref Cpu6502 cpu)
         {
-            ushort addr = cpu.ReadByte(cpu.PC++);
-            ushort val = (ushort)(cpu.ReadWord(addr) + cpu.Y);
+            ushort val = (ushort)(cpu.ReadWord(cpu.ReadByte(cpu.PC++)) + cpu.Y);
 
             byte hiVal = BitConverter.IsLittleEndian ? (byte)(val >> 8) : (byte)(val << 8);
 
-            if ((addr & 0xFF00) != hiVal << 8)
+            if ((cpu.ReadByte(cpu.PC++) & 0xFF00) != hiVal << 8)
             {
                 return (val, 1);
             }

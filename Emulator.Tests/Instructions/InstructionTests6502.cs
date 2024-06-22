@@ -93,12 +93,9 @@ namespace Emulator.Tests.Instructions
 
         public static ushort GetNextIndirectAddr(ushort addr)
         {
-            byte loAddr = BitConverter.IsLittleEndian ? (byte)(addr & 0xFF) : (byte)(addr >> 8);
-            byte hiAddr = BitConverter.IsLittleEndian ? (byte)(addr >> 8) : (byte)(addr & 0xFF);
-            ;
-            if (loAddr == 0xFF)
+            if ((BitConverter.IsLittleEndian ? (byte)(addr & 0xFF) : (byte)(addr >> 8)) == 0xFF)
             {
-                return (ushort)(hiAddr << 8);
+                return (ushort)((BitConverter.IsLittleEndian ? (byte)(addr >> 8) : (byte)(addr & 0xFF)) << 8);
             }
             else
             {

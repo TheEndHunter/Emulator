@@ -319,7 +319,7 @@ namespace Emulator._6502
             {
                 var s = n.CheckDeviceInRange(addr, n.DeviceFlags);
                 int devCount = Devices.Count;
-                for(int i = 0; i < devCount; i++)
+                for (int i = 0; i < devCount; i++)
                 {
                     var device = Devices[i];
 
@@ -387,7 +387,7 @@ namespace Emulator._6502
                     _unknownInstruction.Disassemble(sb, this, ref address, showFlags);
                 }
                 else
-                { 
+                {
                     i.Disassemble(sb, this, ref address, showFlags);
                 }
                 span[ops] = sb.ToString();
@@ -398,7 +398,7 @@ namespace Emulator._6502
 
         public ReadOnlySpan<string> DecompileAddrRange(ushort startAddress, ushort endAddress = ushort.MaxValue, bool showFlags = false)
         {
-            Span<string> span = new string[(endAddress-startAddress)];
+            Span<string> span = new string[(endAddress - startAddress) + 1];
 
             var sb = new StringBuilder();
             for (var address = startAddress; address < endAddress;)
@@ -413,6 +413,7 @@ namespace Emulator._6502
                 {
                     i.Disassemble(sb, this, ref address, showFlags);
                 }
+
                 span[address] = sb.ToString();
             }
             return span;
@@ -449,7 +450,7 @@ namespace Emulator._6502
         {
             StringBuilder sb = new();
             sb.Append("CPU Status:");
-            sb.Append($"Registers:");
+            sb.Append($"_registers:");
             sb.Append($"A: 0x{A:X2}({A}) ");
             sb.Append($"X: 0x{X:X2}({X}) ");
             sb.Append($"Y: 0x{Y:X2}({Y}) ");

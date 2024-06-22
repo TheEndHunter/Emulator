@@ -216,7 +216,7 @@ namespace Emulator._6502
             this[0xbd] = new LDA_AbsoluteX();
             this[0xbe] = new LDX_AbsoluteY();
             this[0xbf] = null;
-            
+
             this[0xc0] = new CPY_Immediate();
             this[0xc1] = new CMP_IndexedIndirect();
             this[0xc2] = null;
@@ -233,7 +233,7 @@ namespace Emulator._6502
             this[0xcd] = new CMP_Absolute();
             this[0xce] = new DEC_Absolute();
             this[0xcf] = null;
-            
+
             this[0xd0] = new BNE();
             this[0xd1] = new CMP_IndirectIndexed();
             this[0xd2] = null;
@@ -250,7 +250,7 @@ namespace Emulator._6502
             this[0xdd] = new CMP_AbsoluteX();
             this[0xde] = new DEC_AbsoluteX();
             this[0xdf] = null;
-            
+
             this[0xe0] = new CPX_Immediate();
             this[0xe1] = new SBC_IndexedIndirect();
             this[0xe2] = null;
@@ -266,7 +266,7 @@ namespace Emulator._6502
             this[0xed] = new SBC_Absolute();
             this[0xee] = new INC_Absolute();
             this[0xef] = null;
-            
+
             this[0xf0] = new BEQ();
             this[0xf1] = new SBC_IndirectIndexed();
             this[0xf2] = null;
@@ -305,7 +305,7 @@ namespace Emulator._6502
     /// </summary>
     public class MOS6502Instructions
     {
-        private readonly Instruction6502 _unknown;
+        private readonly UnknownInstruction _unknown;
         //private readonly Dictionary<byte, Instruction6502> _instructions;
         private readonly InstructionSetMOS6502 _instructions;
 

@@ -13,7 +13,9 @@ namespace Emulator._6502
         {
             StringBuilder sb = new();
 
-            sb.Append($"RAM: {(memory.Length / 1000) / 1000}KB");
+            sb.Append($"RAM: {memory.Length
+                              / 1000
+                              / 1000}KB");
 
             return sb.ToString();
         }
@@ -44,7 +46,8 @@ namespace Emulator._6502
         {
             if (bytes.Length < 1) return;
             if (bytes.Length > memory.Length) throw new InsufficientMemoryException($"Not enough space to load data into memory: {bytes.Length:X} > {memory.Length:X} ");
-            if (addr + bytes.Length > memory.Length) throw new InsufficientMemoryException($"Not enough space to load data into memory from Address:{addr:X} TO Address{addr + bytes.Length:X} > {memory.Length:X} ");
+            if (addr + bytes.Length > memory.Length)
+                throw new InsufficientMemoryException($"Not enough space to load data into memory from Address:{addr:X} TO Address{(addr + bytes.Length):X} > {memory.Length:X} ");
 
             bytes.CopyTo(memory);
             bytes.CopyTo(memory.Slice(addr, bytes.Length));

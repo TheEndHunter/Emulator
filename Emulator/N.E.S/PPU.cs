@@ -49,7 +49,7 @@
 
     /// <summary>
     /// NES PPU Emulation Class,
-    /// Stores PPU Registers and
+    /// Stores PPU _registers and
     /// closely emulates the NES PPUs hardware behavior
     /// 
     /// MemoryAccess from the PPU to the CHR ROM and Memory is handled Externally through the IDevice6502 interface

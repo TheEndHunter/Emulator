@@ -57,8 +57,8 @@ namespace Emulator.App
                 {
                     File.Delete(path);
                 }
-                TextWriter text = new StreamWriter(path);
-                for(int i = 0; i < dis.Length; i++)
+                using StreamWriter text = new(path);
+                for (int i = 0; i < dis.Length; i++)
                 {
                     text.WriteLineAsync(dis[i]);
                 }
@@ -148,7 +148,7 @@ namespace Emulator.App
                         {
                             File.Delete(path);
                         }
-                        TextWriter text = new StreamWriter(path);
+                        using StreamWriter text = new(path);
                         for (int i = 0; i < dis.Length; i++)
                         {
                             text.WriteLineAsync(dis[i]);
